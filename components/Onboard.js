@@ -1,68 +1,66 @@
-import * as React from "react";
+import * as React from 'react';
 import {
   Image,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
-  Dimensions
-} from "react-native";
+  Dimensions,
+  SafeAreaView,
+} from 'react-native';
 
 const dimention = Dimensions.get('screen');
-const Onboard = (props) => {
-
+const Onboard = props => {
   return (
-    <View style={styles.onboard}>
-      <Image
-        style={styles.images}
-        source={require('../assets/logo.png')}
-      />
-      <View>
-        <Text style={styles.head}>Hundreds of years of patient data will now be protected.  </Text>
-
+    <SafeAreaView style={styles.onboard}>
+      {/* Image container  */}
+      <View
+        style={{
+          flex: 0.5,
+        }}>
+        <Image style={styles.images} source={require('../assets/logo.png')} />
+      </View>
+      <View
+        style={{
+          flex: 1,
+        }}>
+        <Text style={styles.head}>Hundreds of years of patient data will</Text>
+        <Text style={styles.head}>now be protected.</Text>
         <Image
-          style={[styles.coverimage,{marginTop: dimention.height/4}]}
+          style={[styles.coverimage, {marginTop: 12}]}
           source={require('../assets/cover.png')}
         />
-      </View>
-      <TouchableOpacity style={styles.buttonWrapper} onPress={() => props.navigation.navigate("signin")}>
+        <TouchableOpacity
+          style={styles.buttonWrapper}
+          onPress={() => props.navigation.navigate('signin')}>
           <Text style={styles.buton}>Get Started </Text>
         </TouchableOpacity>
-    </View>
-
+      </View>
+    </SafeAreaView>
   );
-
-
 };
 
 const styles = StyleSheet.create({
-
   onboard: {
     backgroundColor: '#fff',
     flex: 1,
-    width: "100%",
-    overflow: "hidden",
-    position:'relative'
   },
   images: {
     height: 38,
     width: 187,
     top: 103,
     marginLeft: 90,
-
   },
   head: {
     fontSize: 18,
     lineHeight: 27,
     textAlign: 'center',
-    paddingHorizontal:20
-
+    paddingHorizontal: 20,
   },
   coverimage: {
     height: 190,
     width: 240,
-    alignSelf: 'center'
-
+    alignSelf: 'center',
   },
   buton: {
     height: 52,
@@ -76,12 +74,10 @@ const styles = StyleSheet.create({
     lineHeight: 20.8,
     padding: 12,
     marginTop: 20,
-    alignSelf:'center'
+    alignSelf: 'center',
   },
-  buttonWrapper:{
-    marginTop:50
-  }
-
+  buttonWrapper: {
+    marginTop: 50,
+  },
 });
 export default Onboard;
-

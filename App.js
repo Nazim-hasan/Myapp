@@ -47,7 +47,9 @@ function App() {
     <SheetProvider>
       <NavigationContainer>
         <stack.Navigator>
-          <stack.Screen name='Home' component={Onboard}/>
+          <stack.Screen name='Home' component={Onboard} options={{
+            headerShown: false
+          }}/>
           <stack.Screen name='signin' component={Signin} />
           <stack.Screen name='create' component={Createacount} />
           <stack.Screen name='verify' component={Verfication} />
