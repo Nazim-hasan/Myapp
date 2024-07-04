@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {
+  Pressable,
   StyleSheet,
   Text,
   TextInput,
@@ -16,6 +17,7 @@ import {Image} from '@rneui/base';
 import GoogleIcon from '../assets/svg/google';
 import FacebookIcon from '../assets/svg/facebook';
 import AppleIcon from '../assets/svg/apple';
+import EyeSlashIcon from '../assets/svg/eye';
 
 export const USER_ID = '@user_id';
 export const USER_TOKEN = '@user_token';
@@ -26,6 +28,11 @@ const Signin = ({navigation, props}) => {
   // const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [toggleCheckBox, setToggleCheckBox] = useState(true);
+
+  const [secureText, setSecureText] = useState(true);
+  const handleSecureText = () => {
+    setSecureText(prev => !prev);
+  };
 
   useEffect(() => {
     const getToken = async () => {
@@ -116,8 +123,11 @@ const Signin = ({navigation, props}) => {
               style={styles.inputStyles}
               value={password}
               onChangeText={setPassword}
-              secureTextEntry={true}
+              secureTextEntry={secureText}
             />
+            <Pressable onPress={handleSecureText}>
+              <EyeSlashIcon />
+            </Pressable>
           </View>
 
           <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
@@ -277,7 +287,7 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     lineHeight: 26,
     letterSpacing: 0,
-    width: '100%',
+    width: '87%',
     marginLeft: 5,
   },
 

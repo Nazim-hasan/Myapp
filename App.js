@@ -69,9 +69,28 @@ function App() {
               headerShown: false,
             }}
           />
-          <stack.Screen name="create" component={Createacount} />
-          <stack.Screen name="verify" component={Verfication} />
-          <stack.Screen name="dashboard" component={Maindashboard} />
+          <stack.Screen
+            name="create"
+            component={Createacount}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <stack.Screen
+            name="verify"
+            component={Verfication}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <stack.Screen
+            name="dashboard"
+            component={Maindashboard}
+            options={{
+              headerShown: false,
+              statusBarColor: '#006735'
+            }}
+          />
           <stack.Screen name="drafts" component={Drafts} />
           <stack.Screen name="drprofile" component={Drprofile} />
           <stack.Screen name="profile" component={Profile} />
