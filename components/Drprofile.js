@@ -30,11 +30,11 @@ const Drprofile = (props) => {
     <View style={styles.drinfo}>
     
     <View style={styles.verified}> 
-       <Text style={styles.dctr}>{dctrname.name}</Text>
+       <Text style={styles.dctr}>{dctrname?.name}</Text>
        <Image   source={require('../assets/dashboard/check.png')} style={styles.icon}/>
        </View>
 
-       <Text style={styles.titl}> {dctrname.email}</Text>
+       <Text style={styles.titl}> {dctrname?.email}</Text>
      <View style={styles.eyes}>
        <TouchableOpacity onPress={()=> props.navigation.navigate("profile")} style={styles.viewprof} >
            

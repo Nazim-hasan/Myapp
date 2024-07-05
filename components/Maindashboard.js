@@ -108,7 +108,7 @@ const Maindashboard = props => {
 
   return (
     <>
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView showsVerticalScrollIndicator={false} overScrollMode="never">
         <View style={styles.main}>
           <View style={styles.profile}>
             <TouchableOpacity

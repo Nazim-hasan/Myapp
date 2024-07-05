@@ -22,7 +22,9 @@ const Profile = (props) => {
     <>
       <View style={styles.main}>
         <View>
-          <TouchableOpacity onPress={() => props.navigation.navigate("editprofile")}>
+          <TouchableOpacity onPress={() => props.navigation.navigate("editprofile", {
+            doctorInfo: doctors
+          })}>
             <Image source={require('../assets/drprofile/edit.png')} style={styles.edit} />
           </TouchableOpacity>
 

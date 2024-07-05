@@ -8,25 +8,25 @@ import { apiService } from "../src/services/api-service";
 import ActionSheet from "react-native-actions-sheet";
 
 const EditProfile = ({ data, onChange, navigation, route }) => {
-  const { doctorInfo } = route.params;
+  const { doctorInfo = {} } = route.params;
 
   console.log("doctor infor at editprofile :", doctorInfo)
   const [name, setName] = useState(doctorInfo?.user?.fullName || '');
   const [medical, setMedical] = useState(doctorInfo?.doctor?.medicalName || '');
   const [degree, setDegree] = useState('');
-  const [registration, setRegistration] = useState(doctorInfo.doctor.registrationNo || '');
+  const [registration, setRegistration] = useState(doctorInfo?.doctor?.registrationNo || '');
   const [day, setDay] = useState('');
   const [month, setMonth] = useState('');
   const [year, setYear] = useState('');
-  const [gender, setgender] = useState(doctorInfo.doctor.gender || '');
-  const [religion, setReligion] = useState(doctorInfo.doctor.religion || '');
-  const [phone, setPhone] = useState(doctorInfo.user.phone||'');
-  const [email, setEmail] = useState(doctorInfo.user.email||'');
+  const [gender, setgender] = useState(doctorInfo?.doctor?.gender || '');
+  const [religion, setReligion] = useState(doctorInfo?.doctor?.religion || '');
+  const [phone, setPhone] = useState(doctorInfo?.user?.phone||'');
+  const [email, setEmail] = useState(doctorInfo?.user?.email||'');
   const [preadress, setPreadress] = useState('');
   const [prestate, setPrestate] = useState('');
   const [precity, setPrecity] = useState('');
   const [preapertment, setPreapertment] = useState('');
-  const [profilePicture, setProfilePicture] = useState(doctorInfo.doctor.image || null);
+  const [profilePicture, setProfilePicture] = useState(doctorInfo?.doctor?.image || null);
   const [error, setError] = useState('');
 
   // const pickImage = () => {

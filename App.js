@@ -4,7 +4,7 @@
  *
  * @format
  */
-import {StatusBar} from 'react-native';
+import {StatusBar, Text} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {DefaultTheme, NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
@@ -88,7 +88,33 @@ function App() {
             component={Maindashboard}
             options={{
               headerShown: false,
-              statusBarColor: '#006735'
+              statusBarColor: '#006735',
+            }}
+          />
+
+          <stack.Screen
+            name="patientdashboard"
+            component={Patientdashboard}
+            options={{
+              title: 'Patient Dashboard',
+              statusBarColor: '#006735',
+              headerStyle: {
+                backgroundColor: '#00A746',
+              },
+              headerTintColor: 'white',
+
+              headerTitle: props => (
+                <Text
+                  style={{
+                    fontFamily: 'Poppins Regular',
+                    color: 'white',
+                    fontSize: 14,
+                    marginLeft: -25,
+                    marginTop: 3,
+                  }}>
+                  Patient Dashboard
+                </Text>
+              ),
             }}
           />
           <stack.Screen name="drafts" component={Drafts} />
@@ -97,7 +123,6 @@ function App() {
           <stack.Screen name="editprofile" component={Editprofile} />
           <stack.Screen name="finance" component={Finance} />
           <stack.Screen name="paymenthistory" component={PaymentHisotry} />
-          <stack.Screen name="patientdashboard" component={Patientdashboard} />
           <stack.Screen name="addpatient" component={Addpatient} />
           <stack.Screen name="patientprofile" component={Patientprofile} />
           <stack.Screen name="editpatient" component={Editpatient} />
