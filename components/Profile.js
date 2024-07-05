@@ -1,9 +1,10 @@
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import VerifiedIcon from '../assets/svg/verified';
+import EditIcon from '../assets/svg/edit';
 
-
-const Profile = (props) => {
+const Profile = props => {
   const [doctors, setDoctors] = useState({});
 
   useEffect(() => {
@@ -22,136 +23,153 @@ const Profile = (props) => {
     <>
       <View style={styles.main}>
         <View>
-          <TouchableOpacity onPress={() => props.navigation.navigate("editprofile", {
-            doctorInfo: doctors
-          })}>
-            <Image source={require('../assets/drprofile/edit.png')} style={styles.edit} />
+          <TouchableOpacity
+          style={{
+            position: 'absolute',
+            right: 15,
+            top: 12,
+          }}
+            onPress={() =>
+              props.navigation.navigate('editprofile', {
+                doctorInfo: doctors,
+              })
+            }>
+            <EditIcon />
           </TouchableOpacity>
-
         </View>
-        <View style={styles.viewpr} >
-
-
+        <View style={styles.viewpr}>
           <Image style={styles.imge} />
 
           <View style={styles.verified}>
-            <Text style={styles.dctr}>{doctors.name}</Text>
-            <Image source={require('../assets/dashboard/check.png')} style={styles.icon} />
+            <Text style={styles.dctr}>
+              {doctors.name || 'Dr. Ariful Haque'}
+            </Text>
+            <View
+              style={{
+                marginTop: 3,
+                marginLeft: 5,
+              }}>
+              <VerifiedIcon />
+            </View>
           </View>
 
-          <Text style={styles.title}> {doctors.degree}</Text>
-          <Text style={styles.reg}> {doctors.registration} </Text>
-
-
-
-
+          <Text style={styles.title}> {doctors.degree || 'B.H.M.S, DU'}</Text>
+          <Text style={styles.reg}>
+            Registration No:
+            {doctors.registration || '254654'}
+          </Text>
         </View>
 
         <View style={styles.info}>
-
-          <Text > {doctors.medical}</Text>
-          <Text > {doctors.phone} </Text>
-          <Text > {doctors.preadress}</Text>
-          <Text> {doctors.precity} </Text>
-
+          <Text
+            style={{
+              fontFamily: 'Poppins Medium',
+              fontSize: 16,
+              color: '#4F4F4F',
+            }}>
+            {' '}
+            {doctors.medical || 'Shafi Homeo Care'}
+          </Text>
+          <Text
+            style={{
+              fontFamily: 'Poppins Regular',
+              color: '#5B6550',
+            }}>
+            Phone: {doctors.phone || '+880 1610 123112'}{' '}
+          </Text>
+          <Text
+            style={{
+              fontFamily: 'Poppins Regular',
+              color: '#5B6550',
+            }}>
+            Email: {doctors.preadress || ' ariful.uxd@gmail.com'}
+          </Text>
+          <Text
+            style={{
+              fontFamily: 'Poppins Regular',
+              color: '#5B6550',
+              textAlign: 'center',
+              marginTop: 20
+            }}>
+            {' '}
+            {doctors.precity ||
+              'House: 32/1, Road: 03,Shyamoli, Dhaka-1207, Bangladesh'}{' '}
+          </Text>
         </View>
-
       </View>
     </>
-
   );
-
-
-
-
 };
 
 const styles = StyleSheet.create({
-
   main: {
-    backgroundColor: 'white',
     flex: 1,
-    width: "100%",
-    height: 920,
-    overflow: "hidden",
   },
 
   edit: {
-    top: 30,
-    left: 298,
+    position: 'absolute',
+    right: 10,
+    top: 10,
   },
 
   viewpr: {
-    top: 20,
-    left: 110,
+    // top: 20,
+    // left: 110,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginLeft: -30,
+    marginTop: 20,
   },
 
-
   imge: {
-
     width: 100,
     height: 100,
-    left: 20,
     backgroundColor: 'lightgray',
     borderRadius: 50,
-    padding: 10,
-
-
-
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 
   verified: {
     flexDirection: 'row',
-    top: 20,
+    marginTop: 20,
   },
-
-
-  icon: {
-    width: 13.89,
-    height: 14,
-    right: 8,
-    top: 5,
-  },
-
-
 
   title: {
+    fontFamily: 'Poppins Regular',
     fontSize: 16,
     fontWeight: '400',
-    top: 25,
-    left: 25,
+    color: '#5B6550',
   },
 
   dctr: {
-    fontFamily: 'Poppins',
+    fontFamily: 'Poppins Medium',
     fontSize: 18,
-    fontWeight: '600',
     lineHeight: 21,
     textAlign: 'left',
-    color: ' #192608',
-    width: 139,
-    height: 23,
-
+    color: 'black',
+    marginBottom: 5,
   },
   reg: {
-    fontWeight: '400',
+    fontFamily: 'Poppins Regular',
+    color: '#5B6550',
     fontSize: 16,
-    top: 35,
-    right: 18,
+    marginTop: -5,
   },
   info: {
-    width: 332,
-    height: 180,
-    top: 95,
-    left: 14,
+    marginTop: 20,
+    paddingVertical: 20,
+    marginLeft: 20,
+    width: '90%',
+    alignItems: 'center',
+    justifyContent: 'center',
     borderRadius: 6,
     borderWidth: 1,
     borderColor: '#AFD59F',
-
   },
 
   primg: {
     top: 15,
   },
 });
-export default Profile; 
+export default Profile;

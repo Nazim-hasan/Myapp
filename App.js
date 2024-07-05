@@ -93,6 +93,15 @@ function App() {
           />
 
           <stack.Screen
+            name="finance"
+            component={Finance}
+            options={{
+              headerShown: false,
+              statusBarColor: '#006735',
+            }}
+          />
+
+          <stack.Screen
             name="patientdashboard"
             component={Patientdashboard}
             options={{
@@ -117,17 +126,198 @@ function App() {
               ),
             }}
           />
-          <stack.Screen name="drafts" component={Drafts} />
-          <stack.Screen name="drprofile" component={Drprofile} />
-          <stack.Screen name="profile" component={Profile} />
-          <stack.Screen name="editprofile" component={Editprofile} />
-          <stack.Screen name="finance" component={Finance} />
-          <stack.Screen name="paymenthistory" component={PaymentHisotry} />
-          <stack.Screen name="addpatient" component={Addpatient} />
+
+          <stack.Screen
+            name="addpatient"
+            component={Addpatient}
+            options={{
+              statusBarColor: '#006735',
+              headerStyle: {
+                backgroundColor: '#00A746',
+              },
+              headerTintColor: 'white',
+              headerTitle: props => (
+                <Text
+                  style={{
+                    fontFamily: 'Poppins Regular',
+                    color: 'white',
+                    fontSize: 14,
+                    marginLeft: -25,
+                    marginTop: 3,
+                  }}>
+                  Add new patient
+                </Text>
+              ),
+            }}
+          />
+
+          <stack.Screen
+            name="editprofile"
+            component={Editprofile}
+            options={{
+              statusBarColor: '#006735',
+              headerStyle: {
+                backgroundColor: '#00A746',
+              },
+              headerTintColor: 'white',
+              headerTitle: props => (
+                <Text
+                  style={{
+                    fontFamily: 'Poppins Regular',
+                    color: 'white',
+                    fontSize: 14,
+                    marginLeft: -25,
+                    marginTop: 3,
+                  }}>
+                  Edit Profile
+                </Text>
+              ),
+            }}
+          />
+
+          <stack.Screen
+            name="profile"
+            component={Profile}
+            options={{
+              statusBarColor: '#006735',
+              headerStyle: {
+                backgroundColor: '#00A746',
+              },
+              headerTintColor: 'white',
+              headerTitle: props => (
+                <Text
+                  style={{
+                    fontFamily: 'Poppins Regular',
+                    color: 'white',
+                    fontSize: 14,
+                    marginLeft: -25,
+                    marginTop: 3,
+                  }}>
+                  Profile
+                </Text>
+              ),
+            }}
+          />
+
+          <stack.Screen
+            name="drprofile"
+            component={Drprofile}
+            options={{
+              statusBarColor: '#006735',
+              headerStyle: {
+                backgroundColor: '#00A746',
+              },
+              headerTintColor: 'white',
+              headerTitle: props => (
+                <Text
+                  style={{
+                    fontFamily: 'Poppins Regular',
+                    color: 'white',
+                    fontSize: 14,
+                    marginLeft: -25,
+                    marginTop: 3,
+                  }}>
+                  Dr Profile
+                </Text>
+              ),
+            }}
+          />
+
+          <stack.Screen
+            name="drafts"
+            component={Drafts}
+            options={{
+              statusBarColor: '#006735',
+              headerStyle: {
+                backgroundColor: '#00A746',
+              },
+              headerTintColor: 'white',
+              headerTitle: props => (
+                <Text
+                  style={{
+                    fontFamily: 'Poppins Regular',
+                    color: 'white',
+                    fontSize: 14,
+                    marginLeft: -25,
+                    marginTop: 3,
+                  }}>
+                  Drafts Data
+                </Text>
+              ),
+            }}
+          />
+
+          <stack.Screen
+            name="helpsupport"
+            component={HelpSupport}
+            options={{
+              statusBarColor: '#006735',
+              headerStyle: {
+                backgroundColor: '#00A746',
+              },
+              headerTintColor: 'white',
+              headerTitle: props => (
+                <Text
+                  style={{
+                    fontFamily: 'Poppins Regular',
+                    color: 'white',
+                    fontSize: 14,
+                    marginLeft: -25,
+                    marginTop: 3,
+                  }}>
+                  Help & Support
+                </Text>
+              ),
+            }}
+          />
+          <stack.Screen
+            name="terms"
+            component={Terms}
+            options={{
+              statusBarColor: '#006735',
+              headerStyle: {
+                backgroundColor: '#00A746',
+              },
+              headerTintColor: 'white',
+              headerTitle: props => (
+                <Text
+                  style={{
+                    fontFamily: 'Poppins Regular',
+                    color: 'white',
+                    fontSize: 14,
+                    marginLeft: -25,
+                    marginTop: 3,
+                  }}>
+                  Terms & Conditions
+                </Text>
+              ),
+            }}
+          />
+          <stack.Screen
+            name="paymenthistory"
+            component={PaymentHisotry}
+            options={{
+              statusBarColor: '#006735',
+              headerStyle: {
+                backgroundColor: '#00A746',
+              },
+              headerTintColor: 'white',
+              headerTitle: props => (
+                <Text
+                  style={{
+                    fontFamily: 'Poppins Regular',
+                    color: 'white',
+                    fontSize: 14,
+                    marginLeft: -25,
+                    marginTop: 3,
+                  }}>
+                  Payment History
+                </Text>
+              ),
+            }}
+          />
           <stack.Screen name="patientprofile" component={Patientprofile} />
           <stack.Screen name="editpatient" component={Editpatient} />
-          <stack.Screen name="helpsupport" component={HelpSupport} />
-          <stack.Screen name="terms" component={Terms} />
           <stack.Screen name="patient" component={Patient} />
           <stack.Screen name="addfinance" component={AddFinence} />
         </stack.Navigator>

@@ -566,7 +566,7 @@ const styles = StyleSheet.create({
     left: 13,
   },
   draft: {
-    width: '95%',
+    width: '90%',
     height: 140,
     backgroundColor: '#FAFFFC',
     borderRadius: 6,
@@ -577,6 +577,7 @@ const styles = StyleSheet.create({
     borderRightWidth: 0.2,
     borderColor: '#42D782',
     borderTopColor: 'white',
+    marginLeft: 20
     
   },
   drimg: {

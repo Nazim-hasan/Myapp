@@ -1,32 +1,45 @@
 // import * as ImagePicker from 'expo-image-picker';
-import React, { useState } from "react";
-import { Image, ScrollView, StyleSheet, Text, TextInput, View, TouchableOpacity } from 'react-native';
-import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
-import { USER_ID, USER_TOKEN } from "./Signin";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { apiService } from "../src/services/api-service";
-import ActionSheet from "react-native-actions-sheet";
+import React, {useState} from 'react';
+import {
+  Image,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+  TouchableOpacity,
+} from 'react-native';
+import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
+import {USER_ID, USER_TOKEN} from './Signin';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {apiService} from '../src/services/api-service';
+import ActionSheet from 'react-native-actions-sheet';
+import CameraIcon from '../assets/svg/camera';
 
-const EditProfile = ({ data, onChange, navigation, route }) => {
-  const { doctorInfo = {} } = route.params;
+const EditProfile = ({data, onChange, navigation, route}) => {
+  const {doctorInfo = {}} = route.params;
 
-  console.log("doctor infor at editprofile :", doctorInfo)
+  console.log('doctor infor at editprofile :', doctorInfo);
   const [name, setName] = useState(doctorInfo?.user?.fullName || '');
   const [medical, setMedical] = useState(doctorInfo?.doctor?.medicalName || '');
   const [degree, setDegree] = useState('');
-  const [registration, setRegistration] = useState(doctorInfo?.doctor?.registrationNo || '');
+  const [registration, setRegistration] = useState(
+    doctorInfo?.doctor?.registrationNo || '',
+  );
   const [day, setDay] = useState('');
   const [month, setMonth] = useState('');
   const [year, setYear] = useState('');
   const [gender, setgender] = useState(doctorInfo?.doctor?.gender || '');
   const [religion, setReligion] = useState(doctorInfo?.doctor?.religion || '');
-  const [phone, setPhone] = useState(doctorInfo?.user?.phone||'');
-  const [email, setEmail] = useState(doctorInfo?.user?.email||'');
+  const [phone, setPhone] = useState(doctorInfo?.user?.phone || '');
+  const [email, setEmail] = useState(doctorInfo?.user?.email || '');
   const [preadress, setPreadress] = useState('');
   const [prestate, setPrestate] = useState('');
   const [precity, setPrecity] = useState('');
   const [preapertment, setPreapertment] = useState('');
-  const [profilePicture, setProfilePicture] = useState(doctorInfo?.doctor?.image || null);
+  const [profilePicture, setProfilePicture] = useState(
+    doctorInfo?.doctor?.image || null,
+  );
   const [error, setError] = useState('');
 
   // const pickImage = () => {
@@ -81,7 +94,7 @@ const EditProfile = ({ data, onChange, navigation, route }) => {
       quality: 1,
     };
 
-    launchImageLibrary(options, (response) => {
+    launchImageLibrary(options, response => {
       if (response.didCancel) {
         console.log('User cancelled image picker');
       } else if (response.error) {
@@ -89,18 +102,14 @@ const EditProfile = ({ data, onChange, navigation, route }) => {
       } else if (response.customButton) {
         console.log('User tapped custom button: ', response.customButton);
       } else {
-        const source = { uri: response.assets[0].uri };
+        const source = {uri: response.assets[0].uri};
         // setImageUri(source.uri);
         setProfilePicture(source.uri);
-
       }
     });
-  }
-
-
+  };
 
   const parseDate = (year, month, day) => {
-
     const date = new Date(year, month - 1, day);
     const formatted = date.toISOString().split('T')[0];
 
@@ -108,10 +117,19 @@ const EditProfile = ({ data, onChange, navigation, route }) => {
   };
 
   const handleAddDoctor = async () => {
-
-    if (!name || !medical || !degree || !profilePicture || !registration || !day
-      || !month || !year || !gender || !religion || !phone || !email
-
+    if (
+      !name ||
+      !medical ||
+      !degree ||
+      !profilePicture ||
+      !registration ||
+      !day ||
+      !month ||
+      !year ||
+      !gender ||
+      !religion ||
+      !phone ||
+      !email
     ) {
       setError('Please fill all fields and select a profile picture');
       return;
@@ -149,56 +167,60 @@ const EditProfile = ({ data, onChange, navigation, route }) => {
       religion: religion,
       presentAddress: {
         address: preadress,
-        country: "BD",
-        state: prestate,
-        city: precity,
-        zip: "",
-        apartment: preapertment
-      },
-      permanentAddress: {
-        address: preadress,
-        country: "BD",
+        country: 'BD',
         state: prestate,
         city: precity,
         zip: '',
-        apartment: preapertment
-      }
-    }
+        apartment: preapertment,
+      },
+      permanentAddress: {
+        address: preadress,
+        country: 'BD',
+        state: prestate,
+        city: precity,
+        zip: '',
+        apartment: preapertment,
+      },
+    };
 
     const token = await AsyncStorage.getItem(USER_TOKEN);
     try {
-      await apiService.updateDoctor(data, token).then((res) => {
-        console.log("update doctor response ::::", res.data)
-        // navigation.navigate('patientdashboard');
-      }).catch(err => console.log('Catch update doctor error:', err))
+      await apiService
+        .updateDoctor(data, token)
+        .then(res => {
+          console.log('update doctor response ::::', res.data);
+          // navigation.navigate('patientdashboard');
+        })
+        .catch(err => console.log('Catch update doctor error:', err));
     } catch (err) {
-      console.log("Try:", err);
+      console.log('Try:', err);
       setError('Error adding doctor, please try again');
     }
   };
 
-
   return (
     <>
-      <ScrollView>
+      <ScrollView showsVerticalScrollIndicator={false} overScrollMode="never">
         <View style={styles.main}>
-
           <TouchableOpacity onPress={pickImage}>
             <View style={styles.profile}>
-
               {profilePicture ? (
-                <Image source={{ uri: profilePicture }} style={styles.imge} />
+                <Image source={{uri: profilePicture}} style={styles.imge} />
               ) : (
                 <View style={styles.imge} />
               )}
-              <Image source={require('../assets/editprofile/camera.png')} style={styles.icon} />
-
+              <View
+                style={{
+                  position: 'absolute',
+                  bottom: 1,
+                  left: '60%',
+                }}>
+                <CameraIcon />
+              </View>
             </View>
           </TouchableOpacity>
 
-
           <View style={styles.editable}>
-
             <View>
               <Text style={styles.name}>Full Name * </Text>
 
@@ -208,23 +230,17 @@ const EditProfile = ({ data, onChange, navigation, route }) => {
                 value={name}
                 onChangeText={setName}
               />
-
             </View>
-
 
             <View>
               <Text style={styles.name}>My Medical Name * </Text>
 
               <TextInput
-
                 style={styles.input1}
                 value={medical}
                 onChangeText={setMedical}
               />
-
             </View>
-
-
 
             <View>
               <Text style={styles.name}>Degree * </Text>
@@ -235,11 +251,7 @@ const EditProfile = ({ data, onChange, navigation, route }) => {
                 value={degree}
                 onChangeText={setDegree}
               />
-
             </View>
-
-
-
 
             <View>
               <Text style={styles.name}>Registration NO * </Text>
@@ -250,13 +262,10 @@ const EditProfile = ({ data, onChange, navigation, route }) => {
                 value={registration}
                 onChangeText={setRegistration}
               />
-
             </View>
 
-
-
             <View>
-              <Text style={styles.name}>Date of Birth  * </Text>
+              <Text style={styles.name}>Date of Birth * </Text>
 
               <View style={styles.date}>
                 <TextInput
@@ -279,66 +288,51 @@ const EditProfile = ({ data, onChange, navigation, route }) => {
                   value={year}
                   onChangeText={setYear}
                 />
-
               </View>
-
-
             </View>
-
 
             <View>
               <Text style={styles.name}>Gender * </Text>
 
               <TextInput
-
                 style={styles.input1}
                 value={gender}
                 onChangeText={setgender}
               />
-
             </View>
-
 
             <View>
               <Text style={styles.name}>Phone * </Text>
 
               <TextInput
-
                 style={styles.input1}
                 value={phone}
                 onChangeText={setPhone}
               />
-
             </View>
 
             <View>
               <Text style={styles.name}>Email * </Text>
 
               <TextInput
-
                 style={styles.input1}
                 value={email}
                 onChangeText={setEmail}
               />
-
             </View>
-
 
             <View>
               <Text style={styles.name}>Religion * </Text>
 
               <TextInput
-
                 style={styles.input1}
                 value={religion}
                 onChangeText={setReligion}
               />
-
             </View>
 
-
             <View>
-              <Text style={styles.name}>Present Address  * </Text>
+              <Text style={styles.name}>Present Address * </Text>
 
               <TextInput
                 placeholder="Country"
@@ -346,7 +340,6 @@ const EditProfile = ({ data, onChange, navigation, route }) => {
                 value={preadress}
                 onChangeText={setPreadress}
               />
-
             </View>
 
             <View style={styles.date}>
@@ -363,8 +356,6 @@ const EditProfile = ({ data, onChange, navigation, route }) => {
                 value={precity}
                 onChangeText={setPrecity}
               />
-
-
             </View>
             <View>
               <TextInput
@@ -374,59 +365,48 @@ const EditProfile = ({ data, onChange, navigation, route }) => {
                 onChangeText={setPreapertment}
               />
             </View>
-
-            <View>
-              <TouchableOpacity onPress={() => {
-                // navigation.navigate("profile")
-                handleAddDoctor()
-              }}
-              >
-                <Text style={styles.buton}>Update Profile</Text>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'center',
+                marginVertical: 15,
+              }}>
+              <TouchableOpacity style={styles.buton} onPress={handleAddDoctor}>
+                <Text style={[styles.txt, {color: '#fff'}]}>
+                  Update Profile
+                </Text>
               </TouchableOpacity>
             </View>
           </View>
-
         </View>
       </ScrollView>
     </>
-
   );
-
-
-
-
 };
 
 const styles = StyleSheet.create({
-
+  editable: {
+    marginVertical: 20,
+  },
+  inputContainer: {
+    marginVertical: 5,
+  },
   main: {
-    backgroundColor: 'white',
     flex: 1,
-    width: "100%",
-    height: 1250,
-    overflow: "hidden",
   },
   profile: {
-    top: 20,
-    left: 90,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 20,
+    marginLeft: -40,
   },
   imge: {
     width: 100,
     height: 100,
     left: 20,
     backgroundColor: 'lightgray',
-
     borderRadius: 50,
     padding: 10,
-
-
-
-  },
-  image: {
-    width: 100,
-    height: 100,
-    marginBottom: 12,
-    alignSelf: 'center',
   },
   icon: {
     top: -35,
@@ -434,20 +414,19 @@ const styles = StyleSheet.create({
   },
 
   name: {
+    fontFamily: 'Poppins Regular',
     fontSize: 14,
-    fontWeight: '500',
-    top: 20,
-    left: 20,
+    marginLeft: 20,
     color: '#868D7E',
   },
   input1: {
-
-    width: 322,
+    width: '90%',
     height: 52,
-    top: '25%',
+    paddingLeft: 10,
     left: 10,
     margin: 7,
-    fontFamily: 'Poppins',
+    fontFamily: 'Poppins Regular',
+    color: '#454F37',
     fontSize: 14,
     fontWeight: '400',
     lineHeight: 26,
@@ -456,22 +435,19 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#AFD59F',
     borderRadius: 6,
-
   },
 
   date: {
     flexDirection: 'row',
-
   },
 
   birth: {
-
-    width: 100,
+    width: '28%',
     height: 52,
-    top: '6%',
     left: 9,
     margin: 7,
-    fontFamily: 'Poppins',
+    fontFamily: 'Poppins Regular',
+    paddingLeft: 10,
     fontSize: 14,
     fontWeight: '400',
     lineHeight: 26,
@@ -480,17 +456,14 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#AFD59F',
     borderRadius: 6,
-
   },
   birth1: {
-
-
-    width: 155,
+    width: '43%',
     height: 52,
-    top: '6%',
     left: 9,
     margin: 7,
-    fontFamily: 'Poppins',
+    fontFamily: 'Poppins Regular',
+    paddingLeft: 10,
     fontSize: 14,
     fontWeight: '400',
     lineHeight: 26,
@@ -499,27 +472,45 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#AFD59F',
     borderRadius: 6,
-
-
-
   },
 
   buton: {
-    height: 52,
-    width: 332,
+    height: 50,
+    width: '90%',
     backgroundColor: '#4CAF50',
     borderRadius: 14,
-    left: 12,
-    top: 50,
-    textAlign: 'center',
-    fontSize: 18,
-    color: '#fff',
-    fontFamily: 'Poppins',
-    lineHeight: 20.8,
-
     padding: 12,
-
   },
 
+  txt: {
+    fontFamily: 'Poppins Regular',
+    fontSize: 14,
+    lineHeight: 21,
+    letterSpacing: 0.05,
+    textAlign: 'center',
+  },
+
+  ///
+
+  checkbox: {
+    width: 20,
+    height: 20,
+    borderWidth: 2,
+    borderColor: '#bbb',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  checked: {
+    backgroundColor: '#ebebeb',
+  },
+  checkmark: {
+    color: '#000',
+    fontSize: 14,
+  },
+  label: {
+    marginLeft: 2,
+    fontSize: 14,
+    fontFamily: 'Poppins Regular',
+  },
 });
-export default EditProfile; 
+export default EditProfile;
