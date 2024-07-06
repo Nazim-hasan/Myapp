@@ -10,7 +10,6 @@ import {
   TouchableOpacity,
   ActivityIndicator,
 } from 'react-native';
-import draftDoc from '../testdata/draft-data';
 import PatientModal from './modals/PatientModal';
 import {useNavigation} from '@react-navigation/native';
 import ContextModal from './modals/ContextModal';
@@ -24,6 +23,12 @@ import SearchIcon from '../assets/svg/search';
 import ArrowUpIcon from '../assets/svg/arrow-up';
 import ArrowDownIcon from '../assets/svg/arrow-down';
 import FilterIcon from '../assets/svg/filter';
+import {format} from 'date-fns';
+import PatientIcon from '../assets/svg/patient';
+import AddIcon from '../assets/svg/add';
+import FinanceIcon from '../assets/svg/finance';
+import ProfileIcon from '../assets/svg/profile';
+import HomeInactiveIcon from '../assets/svg/home-inactive';
 
 const Patientdashboard = ({route}) => {
   const [selectedOption, setSelectedOption] = React.useState('');
@@ -134,19 +139,17 @@ const Patientdashboard = ({route}) => {
       <Pressable
         style={styles.item}
         onPress={() => navigation.navigate('patient', {item})}>
-        {item.image.length > 20 ? (
-          <Image source={{uri: item.image}} style={styles.avatar} />
-        ) : (
-          <View style={styles.avatar} />
-        )}
+        <Image style={styles.avatar} />
         <View style={styles.infoContainer}>
           <View style={styles.dateTime}>
-            <Text style={styles.dateTimeText}>{item?.dateOfBirth}</Text>
+            <Text style={styles.dateTimeText}>
+              {format(new Date(item?.dateOfBirth), 'dd MMM yyyy')}
+            </Text>
           </View>
           <View style={styles.details}>
             <Text style={styles.name}>{item?.fullName}</Text>
-            <Text>{item.gender}</Text>
-            <Text>{item.phone}</Text>
+            <Text style={styles.name}>{item?.gender}</Text>
+            <Text style={styles.name}>{item?.phone}</Text>
           </View>
         </View>
         <ContextModal item={item} deletePatientHandler={deletePatientHandler} />
@@ -207,7 +210,7 @@ const Patientdashboard = ({route}) => {
               flexDirection: 'row',
               justifyContent: 'center',
               alignItems: 'center',
-              elevation: 2
+              elevation: 2,
             }}>
             <Text
               style={{
@@ -228,7 +231,7 @@ const Patientdashboard = ({route}) => {
               flexDirection: 'row',
               justifyContent: 'center',
               alignItems: 'center',
-              elevation: 2
+              elevation: 2,
             }}>
             <Text
               style={{
@@ -256,6 +259,7 @@ const Patientdashboard = ({route}) => {
             keyExtractor={(item, index) => index.toString()}
             ItemSeparatorComponent={() => <View style={styles.separator} />}
             ListFooterComponent={() => <View style={{height: 100}} />}
+            ListHeaderComponent={() => <View style={{marginTop: 20}} />}
           />
         )}
       </View>
@@ -268,6 +272,54 @@ const Patientdashboard = ({route}) => {
         selectedOption={selectedOption}
         setSelectedOption={setSelectedOption}
       />
+      <View style={styles.btmnav}>
+        <View>
+          <TouchableOpacity
+            style={styles.navItemContainer}
+            onPress={() => {
+              navigation.navigate('dashboard');
+            }}>
+            <HomeInactiveIcon />
+            <Text style={styles.navTitleInActive}>Home</Text>
+          </TouchableOpacity>
+        </View>
+        <View>
+          <TouchableOpacity style={styles.navItemContainer}>
+            <PatientIcon color="#F7BB07" />
+            <Text style={styles.navTitleActive}>Patient</Text>
+          </TouchableOpacity>
+        </View>
+
+        <View>
+          <TouchableOpacity
+            style={{
+              top: -16,
+              left: 10,
+            }}
+            onPress={() => navigation.navigate('addpatient')}>
+            <AddIcon />
+          </TouchableOpacity>
+        </View>
+
+        <View>
+          <TouchableOpacity
+            style={styles.navItemContainer}
+            onPress={() => navigation.navigate('finance')}>
+            <FinanceIcon />
+
+            <Text style={styles.navTitleInActive}>Finance</Text>
+          </TouchableOpacity>
+        </View>
+
+        <View>
+          <TouchableOpacity
+            style={styles.navItemContainer}
+            onPress={() => navigation.navigate('profile')}>
+            <ProfileIcon />
+            <Text style={styles.navTitleInActive}>Profile</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
     </>
   );
 };
@@ -275,6 +327,7 @@ const Patientdashboard = ({route}) => {
 const styles = StyleSheet.create({
   main: {
     flex: 1,
+    marginTop: 20,
   },
 
   inputContainer: {
@@ -485,17 +538,18 @@ const styles = StyleSheet.create({
   ///
   item: {
     flexDirection: 'row',
-    padding: 20,
-    backgroundColor: '#f9f9f9',
+    paddingHorizontal: 20,
     borderRadius: 10,
     marginVertical: 8,
     justifyContent: 'space-between',
   },
   avatar: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    marginRight: 15,
+    width: 50,
+    height: 50,
+    backgroundColor: 'lightgray',
+    borderRadius: 50,
+    padding: 10,
+    marginRight: 10,
   },
   infoContainer: {
     flex: 1,
@@ -508,8 +562,10 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   dateTimeText: {
-    fontSize: 14,
-    color: '#666',
+    fontFamily: 'Poppins Regular',
+    fontSize: 12,
+    color: '#717967',
+    marginBottom: -2,
   },
   details: {
     flexDirection: 'row',
@@ -517,11 +573,12 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   name: {
-    fontSize: 18,
-    fontWeight: 'bold',
+    fontFamily: 'Poppins Regular',
+    fontSize: 14,
+    color: '#192608',
   },
   separator: {
-    height: 1,
+    height: 0.2,
     width: '100%',
     backgroundColor: '#ccc',
   },
@@ -538,6 +595,31 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins Regular',
     color: '#4F4F4F',
     marginBottom: 10,
+  },
+  navItemContainer: {
+    alignItems: 'center',
+    marginTop: 20,
+    marginHorizontal: 5,
+  },
+  navTitleActive: {
+    fontFamily: 'Poppins Regular',
+    color: '#192608',
+  },
+  navTitleInActive: {
+    fontFamily: 'Poppins Regular',
+    color: '#868D7E',
+  },
+  btmnav: {
+    width: '100%',
+    height: 70,
+    flexDirection: 'row',
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: '#B0B0B040',
+    justifyContent: 'space-evenly',
+
+    elevation: 24,
+    // top: 125,
   },
 });
 export default Patientdashboard;

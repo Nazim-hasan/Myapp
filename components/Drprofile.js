@@ -2,22 +2,36 @@ import React, {useEffect, useState} from 'react';
 import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import VerifiedIcon from '../assets/svg/verified';
 import ExitIcon from '../assets/svg/exit';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import SocialIcons from '../assets/svg/social';
+import { apiService } from '../src/services/api-service';
+import { USER_ID, USER_TOKEN } from './Signin';
 const Drprofile = props => {
   const [dctrname, setDctrname] = useState();
 
+  const getDoc = async () => {
+    const id = await AsyncStorage.getItem(USER_ID);
+    const token = await AsyncStorage.getItem(USER_TOKEN);
+    await apiService
+      .getDoctor(token)
+      .then(res => {
+        setDctrname(res.data.user);
+      })
+      .catch(err => console.log('get doctor fail:', err.response.data));
+  };
+
   useEffect(() => {
-    const fetchDoctors = async () => {
-      try {
-        const response = await axios.get(
-          'http://localhost:5000/api/users/signup',
-        );
-        setDctrname(response.data);
-      } catch (error) {
-        console.error('Error fetching doctors', error);
-      }
-    };
-    fetchDoctors();
+    getDoc();
   }, []);
+
+  console.log('dctrname', dctrname);
+
+  const handleLogout = async () => {
+    
+    await AsyncStorage.removeItem(USER_ID);
+    await AsyncStorage.removeItem(USER_TOKEN);
+    props.navigation.navigate('signin');
+  }
 
   return (
     <>
@@ -31,14 +45,15 @@ const Drprofile = props => {
           <View style={styles.drinfo}>
             <View style={styles.verified}>
               <Text style={styles.dctr}>
-                {dctrname?.name || 'Dr. Ariful Haque'}
+                {dctrname?.fullName || 'Dr. Ariful Haque'}
               </Text>
-              <View style={{
+              <View
+                style={{
                   marginTop: 3,
                   marginLeft: 5,
                 }}>
                 <VerifiedIcon />
-                </View>
+              </View>
             </View>
 
             <Text style={styles.titl}>
@@ -57,9 +72,9 @@ const Drprofile = props => {
               </TouchableOpacity>
 
               <TouchableOpacity
-                onPress={() => props.navigation.navigate('profile')}>
-                
-              </TouchableOpacity>
+                onPress={() =>
+                  props.navigation.navigate('profile')
+                }></TouchableOpacity>
             </View>
           </View>
         </View>
@@ -120,13 +135,38 @@ const Drprofile = props => {
               <Text style={styles.tit}> Rating Us </Text>
             </TouchableOpacity>
           </View>
-
-          <View style={styles.logout}>
+          <View style={styles.acc}>
             <ExitIcon />
-            <TouchableOpacity>
+            <TouchableOpacity onPress={handleLogout}>
               <Text style={styles.logclr}>Log out </Text>
             </TouchableOpacity>
           </View>
+        </View>
+
+        <View
+          style={{
+            flex: 1,
+            justifyContent: 'flex-end',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}>
+          <View
+            style={{
+              width: '100%',
+              borderWidth: 0.2,
+              borderColor: '#717967',
+              marginBottom: 20,
+            }}
+          />
+          <SocialIcons />
+          <Text
+            style={{
+              fontFamily: 'Poppins Regular',
+              textAlign: 'center',
+              marginTop: 10,
+            }}>
+            www.homeoly.com
+          </Text>
         </View>
       </View>
     </>
@@ -137,14 +177,10 @@ const styles = StyleSheet.create({
   btnn: {
     fontFamily: 'Poppins Regular',
     color: '#00A746',
-    fontSize: 14
+    fontSize: 14,
   },
   main: {
-    backgroundColor: 'white',
     flex: 1,
-    width: '100%',
-    height: 920,
-    overflow: 'hidden',
   },
   profile: {
     flexDirection: 'row',
@@ -187,16 +223,14 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins Regular',
     color: '#4F4F4F',
     FontSize: 14,
-    marginTop: 5
+    marginTop: 5,
   },
 
   eyes: {
     flexDirection: 'row',
   },
 
-  eye: {
-    
-  },
+  eye: {},
 
   viewprof: {
     flexDirection: 'row',
@@ -235,15 +269,17 @@ const styles = StyleSheet.create({
   logout: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 80
+    marginTop: 80,
   },
   logclr: {
     fontFamily: 'Poppins Regular',
     fontSize: 16,
     fontWeight: '400',
+    lineHeight: 26,
     letterSpacing: 0.05,
     textAlign: 'left',
-    left: 18,
+    left: 10,
+    margin: 10,
     color: 'red',
   },
 });

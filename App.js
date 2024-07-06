@@ -29,6 +29,8 @@ import Patient from './components/Patient';
 import AddFinence from './components/AddFinence';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {SheetProvider} from 'react-native-actions-sheet';
+import UpdateDueScreen from './components/UpdateDueScreen';
+import UpdateBillScreen from './components/UpdateBillScreen';
 
 const stack = createNativeStackNavigator();
 
@@ -105,25 +107,8 @@ function App() {
             name="patientdashboard"
             component={Patientdashboard}
             options={{
-              title: 'Patient Dashboard',
+              headerShown: false,
               statusBarColor: '#006735',
-              headerStyle: {
-                backgroundColor: '#00A746',
-              },
-              headerTintColor: 'white',
-
-              headerTitle: props => (
-                <Text
-                  style={{
-                    fontFamily: 'Poppins Regular',
-                    color: 'white',
-                    fontSize: 14,
-                    marginLeft: -25,
-                    marginTop: 3,
-                  }}>
-                  Patient Dashboard
-                </Text>
-              ),
             }}
           />
 
@@ -316,9 +301,103 @@ function App() {
               ),
             }}
           />
+
+          <stack.Screen
+            name="patient"
+            component={Patient}
+            options={{
+              statusBarColor: '#006735',
+              headerStyle: {
+                backgroundColor: '#00A746',
+              },
+              headerTintColor: 'white',
+              headerTitle: props => (
+                <Text
+                  style={{
+                    fontFamily: 'Poppins Regular',
+                    color: 'white',
+                    fontSize: 14,
+                    marginLeft: -25,
+                    marginTop: 3,
+                  }}>
+                  Patient Profile
+                </Text>
+              ),
+            }}
+          />
+
+          <stack.Screen
+            name="editpatient"
+            component={Editpatient}
+            options={{
+              statusBarColor: '#006735',
+              headerStyle: {
+                backgroundColor: '#00A746',
+              },
+              headerTintColor: 'white',
+              headerTitle: props => (
+                <Text
+                  style={{
+                    fontFamily: 'Poppins Regular',
+                    color: 'white',
+                    fontSize: 14,
+                    marginLeft: -25,
+                    marginTop: 3,
+                  }}>
+                  Edit Patient
+                </Text>
+              ),
+            }}
+          />
+
+          <stack.Screen
+            name="updateDue"
+            component={UpdateDueScreen}
+            options={{
+              statusBarColor: '#006735',
+              headerStyle: {
+                backgroundColor: '#00A746',
+              },
+              headerTintColor: 'white',
+              headerTitle: props => (
+                <Text
+                  style={{
+                    fontFamily: 'Poppins Regular',
+                    color: 'white',
+                    fontSize: 14,
+                    marginLeft: -25,
+                    marginTop: 3,
+                  }}>
+                  Update Due
+                </Text>
+              ),
+            }}
+          />
+          <stack.Screen
+            name="updateBill"
+            component={UpdateBillScreen}
+            options={{
+              statusBarColor: '#006735',
+              headerStyle: {
+                backgroundColor: '#00A746',
+              },
+              headerTintColor: 'white',
+              headerTitle: props => (
+                <Text
+                  style={{
+                    fontFamily: 'Poppins Regular',
+                    color: 'white',
+                    fontSize: 14,
+                    marginLeft: -25,
+                    marginTop: 3,
+                  }}>
+                  Update Bill
+                </Text>
+              ),
+            }}
+          />
           <stack.Screen name="patientprofile" component={Patientprofile} />
-          <stack.Screen name="editpatient" component={Editpatient} />
-          <stack.Screen name="patient" component={Patient} />
+
           <stack.Screen name="addfinance" component={AddFinence} />
         </stack.Navigator>
       </NavigationContainer>

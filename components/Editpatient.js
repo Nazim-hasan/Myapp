@@ -296,7 +296,7 @@ const styles = StyleSheet.create({
   },
   profile: {
     top: 20,
-    left: 90,
+    left: '30%',
   },
   imge: {
 
@@ -316,6 +316,7 @@ const styles = StyleSheet.create({
   },
 
   name: {
+    fontFamily: 'Poppins Regular',
     fontSize: 14,
     fontWeight: '500',
     top: 20,
@@ -324,12 +325,13 @@ const styles = StyleSheet.create({
   },
   input1: {
 
-    width: 322,
+    width: '92%',
+    paddingLeft: 10,
     height: 52,
     top: '25%',
     left: 10,
     margin: 7,
-    fontFamily: 'Poppins',
+    fontFamily: 'Poppins Regular',
     fontSize: 14,
     fontWeight: '400',
     lineHeight: 26,
@@ -348,7 +350,8 @@ const styles = StyleSheet.create({
 
   birth: {
 
-    width: 100,
+    width: '28%',
+    paddingLeft: 10,
     height: 52,
     top: '6%',
     left: 9,
@@ -388,18 +391,19 @@ const styles = StyleSheet.create({
 
   buton: {
     height: 52,
-    width: 332,
+    width: '95%',
     backgroundColor: '#4CAF50',
     borderRadius: 14,
     left: 12,
-    top: 50,
+    top: 52,
     textAlign: 'center',
     fontSize: 18,
     color: '#fff',
-    fontFamily: 'Poppins',
+    fontFamily: 'Poppins Regular',
     lineHeight: 20.8,
 
     padding: 12,
+    paddingTop: 15,
 
   },
 

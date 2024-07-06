@@ -50,7 +50,7 @@ const CreatePrescriptionModal = ({ modalVisible, closeModal, submitPrescription 
             >
                 <ScrollView contentContainerStyle={styles.scrollViewContent}>
                     <View style={styles.modalContainer}>
-                        <Pressable style={{ position: 'absolute', top: 10, right: 10, padding:5 }} onPress={closeModal}>
+                        <Pressable style={{ position: 'absolute', top: 5, right: 10, padding:5 }} onPress={closeModal}>
                             <Text style={{ fontSize: 20, fontWeight: 'bold' }}>⨉</Text>
                         </Pressable>
                         <View style={styles.flex_row}>
@@ -60,8 +60,8 @@ const CreatePrescriptionModal = ({ modalVisible, closeModal, submitPrescription 
 
                         <View style={[styles.px15, styles.mt10, ]}>
                             <View style={[{ flexDirection: 'row', justifyContent: 'space-between' }]}>
-                                <Text style={{ fontWeight: 'bold' }}>Symptoms</Text>
-                                <Text style={{ fontWeight: 'bold' }}>12 May 2024</Text>
+                                <Text style={{ fontFamily: 'Poppins Medium', color: '#192608' }}>Symptoms</Text>
+                                <Text style={{ fontFamily: 'Poppins Medium', color: '#192608' }}>12 May 2024</Text>
                             </View>
                             <TextInput
                                 style={[styles.textarea, styles.mt10, { height: 80 }]}
@@ -75,7 +75,7 @@ const CreatePrescriptionModal = ({ modalVisible, closeModal, submitPrescription 
 
                         <View style={[styles.px15, styles.mt10, ]}>
                             <View style={[{ flexDirection: 'row', justifyContent: 'space-between' }]}>
-                                <Text style={{ fontWeight: 'bold' }}>Prescription</Text>
+                                <Text style={{  fontFamily: 'Poppins Medium', color: '#192608' }}>Prescription</Text>
                             </View>
                             <TextInput
                                 style={[styles.textarea]}
@@ -89,7 +89,7 @@ const CreatePrescriptionModal = ({ modalVisible, closeModal, submitPrescription 
 
                         <View style={[styles.px15, styles.mt10, ]}>
                             <View style={[{ flexDirection: 'row', justifyContent: 'space-between' }]}>
-                                <Text style={{ fontWeight: 'bold' }}>Comment</Text>
+                                <Text style={{  fontFamily: 'Poppins Medium', color: '#192608' }}>Comment</Text>
                             </View>
                             <TextInput
                                 style={[styles.textarea, { height: 70 }]}
@@ -180,9 +180,10 @@ const styles = StyleSheet.create({
         // padding: 20,
     },
     modalTitle: {
-        fontSize: 16,
-        fontWeight: 'bold',
-        color: 'black',
+        fontFamily: 'Poppins Medium',
+        textAlign: 'left',
+        fontSize: 14,
+        color: '#192608',
         paddingVertical: 10,
     },
     separator: {

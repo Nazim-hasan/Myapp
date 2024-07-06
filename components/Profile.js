@@ -3,21 +3,29 @@ import React, {useEffect, useState} from 'react';
 import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import VerifiedIcon from '../assets/svg/verified';
 import EditIcon from '../assets/svg/edit';
+import { USER_ID, USER_TOKEN } from './Signin';
+import { apiService } from '../src/services/api-service';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Profile = props => {
   const [doctors, setDoctors] = useState({});
 
+  const getDoc = async () => {
+    const id = await AsyncStorage.getItem(USER_ID);
+    const token = await AsyncStorage.getItem(USER_TOKEN);
+    await apiService
+      .getDoctor(token)
+      .then(res => {
+        setDoctors(res.data.user);
+      })
+      .catch(err => console.log('get doctor fail:', err.response.data));
+  };
+
   useEffect(() => {
-    const fetchDoctors = async () => {
-      try {
-        const response = await axios.get('http://localhost:5000/api/doctors');
-        setDoctors(response.data);
-      } catch (error) {
-        console.error('Error fetching doctors', error);
-      }
-    };
-    fetchDoctors();
+    getDoc();
   }, []);
+
+  console.log('doctors', doctors)
 
   return (
     <>
@@ -42,7 +50,7 @@ const Profile = props => {
 
           <View style={styles.verified}>
             <Text style={styles.dctr}>
-              {doctors.name || 'Dr. Ariful Haque'}
+              {doctors.fullName || 'Dr. Ariful Haque'}
             </Text>
             <View
               style={{
@@ -82,7 +90,7 @@ const Profile = props => {
               fontFamily: 'Poppins Regular',
               color: '#5B6550',
             }}>
-            Email: {doctors.preadress || ' ariful.uxd@gmail.com'}
+            Email: {doctors.email || ' ariful.uxd@gmail.com'}
           </Text>
           <Text
             style={{

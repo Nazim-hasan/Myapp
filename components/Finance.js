@@ -2,10 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import {
   FlatList,
-  Image,
-  Modal,
   Pressable,
-  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -14,10 +11,8 @@ import {
 import {apiService} from '../src/services/api-service';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {USER_ID, USER_TOKEN} from './Signin';
-import HomeIcon from '../assets/svg/home';
 import PatientIcon from '../assets/svg/patient';
 import AddIcon from '../assets/svg/add';
-import FinanceIcon from '../assets/svg/finance';
 import ProfileIcon from '../assets/svg/profile';
 import FinanceActiveIcon from '../assets/svg/finance-active';
 import HomeInactiveIcon from '../assets/svg/home-inactive';
@@ -25,59 +20,71 @@ import MoneyCashIcon from '../assets/svg/money-cash';
 import CalenderClockIcon from '../assets/svg/calender-clock';
 import ArrowDownIcon from '../assets/svg/arrow-down';
 import FilterIcon from '../assets/svg/filter';
+import BillingContextModal from './modals/BillingModal';
 
 const Finance = props => {
-  const [allPatient, setAllPatient] = React.useState([]);
-  const [loading, setLoading] = React.useState(true);
-  const [visible, setVisible] = useState(false);
   const navigation = useNavigation();
-  const [bills, setBills] = useState([]);
+  const [bills, setBills] = useState(null);
+
+  const [modalVisible, setModalVisible] = React.useState(false);
+  const [selectedItem, setSelectedItem] = React.useState(null);
+
+  const handleOption = item => {
+    setSelectedItem(item);
+    setModalVisible(!modalVisible);
+  };
 
   useEffect(() => {
-    // const userId = AsyncStorage.getItem(USER_ID);
-    // apiService.getAllBill({ userId }).then((res) => {
-    //   console.log("Finance: ", res.data.data);
-    //   setBills(res?.data?.data || [])
-    // }).catch(err => console.log(err))
-    loadPatient();
+    
+    loadBillings();
   }, []);
-
-  const loadPatient = async () => {
+  const loadBillings = async () => {
     const token = await AsyncStorage.getItem(USER_TOKEN);
+    apiService.getFinance(token).then((res) => {
+      setBills(res?.data || [])
+    }).catch(err => console.log(err))
+  }
 
-    await apiService
-      .getAllPatient(token)
-      .then(res => {
-        const data = res.data.patients.map(item => {
-          return {id: item._id, ...item};
-        });
-        console.log('token at finance', data);
-        setAllPatient(data);
-        setLoading(false);
-      })
-      .catch(err => {
-        setLoading(false);
-        console.log('patient dashboard data loading :', err);
-      });
-  };
+  function getLast10Chars(str) {
+    if (typeof str !== 'string') {
+      throw new TypeError('Input must be a string');
+    }
+    return str.slice(-10);
+  }
+
+  console.log('bills', bills)
+
 
   const billedItem = data => {
     const {item} = data;
-    console.log('item :', item);
+    console.log('item', item)
     return (
       <Pressable
         style={styles.item}
-        onPress={() => navigation.navigate('patient', {item})}>
+        onPress={() => {
+          return;
+          navigation.navigate('patient', {item})
+        }}>
         <View
           style={{
             flexDirection: 'row',
             justifyContent: 'space-around',
             paddingVertical: 10,
           }}>
-          <Text style={styles.name}>{item.fullName}</Text>
-          <Text style={styles.name}>{item?.totalBill}</Text>
-          <Text style={styles.name}>{item?.receivedBill}</Text>
-          <Text style={styles.name}>{item?.DueBill}</Text>
+          <Text style={styles.name}>{item?.patient?.fullName}</Text>
+          <Text style={styles.name}>{item?.billing?.totalAmount}</Text>
+          <Text style={styles.name}>{item?.billing?.receivedAmount}</Text>
+          <Text style={styles.name}>{item?.billing?.dueAmount}</Text>
+          {/* <TouchableOpacity>
+          <MoreIcon />
+          </TouchableOpacity> */}
+
+          <BillingContextModal
+            prescriptionId={item?._id}
+            billingInfo={item}
+            handleOption={handleOption}
+          />
+
         </View>
       </Pressable>
     );
@@ -101,13 +108,13 @@ const Finance = props => {
           <View style={styles.scndoverview}>
             <View style={styles.overvieww1}>
               <MoneyCashIcon />
-              <Text style={styles.num}>0</Text>
+              <Text style={styles.num}>{bills?.totalEarnings}</Text>
               <Text style={styles.txt}>Todays Earning </Text>
             </View>
 
             <View style={styles.overvieww2}>
               <CalenderClockIcon />
-              <Text style={styles.num}>0</Text>
+              <Text style={styles.num}>{bills?.totalDue}</Text>
               <Text style={styles.txt}>Due </Text>
             </View>
           </View>
@@ -165,7 +172,7 @@ const Finance = props => {
           </View>
         </View>
         <View style={styles.table}>
-          <Text style={styles.tableHeader}>Patient </Text>
+          <Text style={styles.tableHeader}>Patient</Text>
           <Text style={styles.tableHeader}> Total </Text>
           <Text style={styles.tableHeader}> Recieve</Text>
           <Text style={styles.tableHeader}> Due </Text>
@@ -173,8 +180,8 @@ const Finance = props => {
         <View style={styles.separator}></View>
 
         <FlatList
-          style={{flex: 1}}
-          data={allPatient}
+          style={{flex: 1,}}
+          data={bills?.prescriptionsWithPatients || []}
           renderItem={billedItem}
           keyExtractor={(item, index) => index.toString()}
           ItemSeparatorComponent={() => <View style={styles.separator} />}
@@ -237,6 +244,10 @@ const Finance = props => {
 };
 
 const styles = StyleSheet.create({
+  name: {
+    fontFamily: 'Poppins Regular',
+
+  },
   separator: {
     height: 1,
     width: '100%',
@@ -244,7 +255,6 @@ const styles = StyleSheet.create({
   },
   item: {
     padding: 20,
-    backgroundColor: '#f9f9f9',
     borderRadius: 10,
     marginVertical: 8,
   },
@@ -407,7 +417,7 @@ const styles = StyleSheet.create({
   table: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    marginTop: 90,
+    marginTop: 20,
     paddingBottom: 10,
   },
 

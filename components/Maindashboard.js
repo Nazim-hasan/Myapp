@@ -50,6 +50,8 @@ const Maindashboard = props => {
       .catch(err => console.log('get doctor fail:', err.response.data));
   };
 
+  console.log('doctorInfo', doctorInfo)
+
   const getTotalPatient = async () => {
     const token = await AsyncStorage.getItem(USER_TOKEN);
 
@@ -273,7 +275,7 @@ const Maindashboard = props => {
           <TouchableOpacity
             style={styles.navItemContainer}
             onPress={() =>
-              props.navigation.navigate('editprofile', {doctorInfo})
+              props.navigation.navigate('profile')
             }>
             <ProfileIcon />
             <Text style={styles.navTitleInActive}>Profile</Text>
@@ -384,7 +386,7 @@ const styles = StyleSheet.create({
   overview: {
     flexDirection: 'row',
     marginTop: 10,
-    marginHorizontal: 10
+    marginLeft: '5%'
   },
   overview1: {
     width: 112,
@@ -492,7 +494,7 @@ const styles = StyleSheet.create({
     color: '#4F4F4F',
     fontSize: 18,
     marginTop: 10,
-    marginLeft: 20,
+    marginLeft: '6%',
   },
   overvieww1: {
     width: 165,
