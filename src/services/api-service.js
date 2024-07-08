@@ -51,12 +51,16 @@ export const apiService = {
       },
     ),
   updateDoctor: async (formData, token) =>
-    await axios.put(`${baseUrl}${endpoints.UPDATE_DOCTOR}`, formData, {
+    {
+      console.log('formData', formData)
+      console.log('endpoints.UPDATE_DOCTOR',`${baseUrl}${endpoints.UPDATE_DOCTOR}`)
+    return await axios.post(`${baseUrl}${endpoints.UPDATE_DOCTOR}`, formData, {
       headers: {
         'Content-Type': 'application/json',
         token,
       },
-    }),
+    })
+    },
 
   updateDue: async (formData, token, prescriptionId) =>
     await axios.put(

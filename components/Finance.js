@@ -232,7 +232,7 @@ const Finance = props => {
           <TouchableOpacity
             style={styles.navItemContainer}
             onPress={() =>
-              props.navigation.navigate('editprofile', {doctorInfo: null})
+              props.navigation.navigate('profile', {doctorInfo: null})
             }>
             <ProfileIcon />
             <Text style={styles.navTitleInActive}>Profile</Text>

@@ -1,5 +1,5 @@
 // import * as ImagePicker from 'expo-image-picker';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Image,
   ScrollView,
@@ -15,11 +15,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {apiService} from '../src/services/api-service';
 import ActionSheet from 'react-native-actions-sheet';
 import CameraIcon from '../assets/svg/camera';
+import { set } from 'date-fns';
 
 const EditProfile = ({data, onChange, navigation, route}) => {
   const {doctorInfo = {}} = route.params;
-
-  console.log('doctor infor at editprofile :', doctorInfo);
   const [name, setName] = useState(doctorInfo?.user?.fullName || '');
   const [medical, setMedical] = useState(doctorInfo?.doctor?.medicalName || '');
   const [degree, setDegree] = useState('');
@@ -40,51 +39,26 @@ const EditProfile = ({data, onChange, navigation, route}) => {
   const [profilePicture, setProfilePicture] = useState(
     doctorInfo?.doctor?.image || null,
   );
+  const [doctors, setDoctors] = useState({});
   const [error, setError] = useState('');
 
-  // const pickImage = () => {
-  //   const options = ['Select from Library', 'Take a Photo', 'Cancel'];
-  //   const cancelButtonIndex = 2;
+  const getDoc = async () => {
+    const id = await AsyncStorage.getItem(USER_ID);
+    const token = await AsyncStorage.getItem(USER_TOKEN);
+    await apiService
+      .getDoctor(token)
+      .then(res => {
+        console.log('res.data.user', res.data)
+        setDoctors(res.data.user);
+      })
+      .catch(err => console.log('get doctor fail:', err.response.data));
+  };
 
-  //   ActionSheet(
-  //     {
-  //       options,
-  //       cancelButtonIndex,
-  //     },
-  //     buttonIndex => {
-  //       if (buttonIndex === 0) {
-  //         launchImageLibrary({
-  //           mediaType: 'photo',
-  //           maxWidth: 300,
-  //           maxHeight: 300,
-  //           quality: 1,
-  //         }, response => {
-  //           handleImageResponse(response);
-  //         });
-  //       } else if (buttonIndex === 1) {
-  //         launchCamera({
-  //           mediaType: 'photo',
-  //           maxWidth: 300,
-  //           maxHeight: 300,
-  //           quality: 1,
-  //         }, response => {
-  //           handleImageResponse(response);
-  //         });
-  //       }
-  //     }
-  //   );
-  // };
+  useEffect(() => {
+    getDoc();
+    
+  }, [doctorInfo]);
 
-  // const handleImageResponse = (response) => {
-  //   if (response.didCancel) {
-  //     console.log('User cancelled image picker');
-  //   } else if (response.error) {
-  //     console.log('ImagePicker Error: ', response.error);
-  //   } else {
-  //     const source = { uri: response.assets[0].uri };
-  //     setProfilePicture(source.uri);
-  //   }
-  // };
 
   const pickImage = () => {
     const options = {
@@ -117,6 +91,7 @@ const EditProfile = ({data, onChange, navigation, route}) => {
   };
 
   const handleAddDoctor = async () => {
+    console.log('I hit')
     if (
       !name ||
       !medical ||
@@ -135,27 +110,6 @@ const EditProfile = ({data, onChange, navigation, route}) => {
       return;
     }
 
-    // const formData = new FormData();
-    // formData.append('name', name);
-    // formData.append('medical', medical);
-    // formData.append('degree', degree);
-    // formData.append('registration', registration);
-    // formData.append('day', day);
-    // formData.append('month', month);
-    // formData.append('year', year);
-    // formData.append('gender', gender);
-    // formData.append('religion', religion);
-    // formData.append('phone', phone);
-    // formData.append('email', email);
-    // formData.append('preadress', preadress);
-    // formData.append('prestate', prestate);
-    // formData.append('precity', precity);
-    // formData.append('preapertment', preapertment);
-    // formData.append('profilePicture', {
-    //   uri: profilePicture,
-    //   type: 'image/jpeg',
-    //   name: 'profile.jpg',
-    // });
 
     const data = {
       fullName: name,
@@ -165,6 +119,11 @@ const EditProfile = ({data, onChange, navigation, route}) => {
       dateOfBirth: parseDate(year, month, day),
       gender: gender,
       religion: religion,
+      medicalName: medical,
+      degrees: [
+        degree
+      ],
+      registrationNo: registration,
       presentAddress: {
         address: preadress,
         country: 'BD',
@@ -183,15 +142,16 @@ const EditProfile = ({data, onChange, navigation, route}) => {
       },
     };
 
+    console.log('data', data)
+
     const token = await AsyncStorage.getItem(USER_TOKEN);
     try {
       await apiService
         .updateDoctor(data, token)
         .then(res => {
           console.log('update doctor response ::::', res.data);
-          // navigation.navigate('patientdashboard');
+          navigation.navigate('dashboard');
         })
-        .catch(err => console.log('Catch update doctor error:', err));
     } catch (err) {
       console.log('Try:', err);
       setError('Error adding doctor, please try again');
@@ -225,7 +185,7 @@ const EditProfile = ({data, onChange, navigation, route}) => {
               <Text style={styles.name}>Full Name * </Text>
 
               <TextInput
-                placeholder="Email or Phone"
+                placeholder="Name"
                 style={styles.input1}
                 value={name}
                 onChangeText={setName}
@@ -246,7 +206,7 @@ const EditProfile = ({data, onChange, navigation, route}) => {
               <Text style={styles.name}>Degree * </Text>
 
               <TextInput
-                placeholder="Email or Phone"
+                placeholder="Degree"
                 style={styles.input1}
                 value={degree}
                 onChangeText={setDegree}
@@ -257,7 +217,7 @@ const EditProfile = ({data, onChange, navigation, route}) => {
               <Text style={styles.name}>Registration NO * </Text>
 
               <TextInput
-                placeholder="Email or Phone"
+                placeholder="Registration No"
                 style={styles.input1}
                 value={registration}
                 onChangeText={setRegistration}
@@ -365,6 +325,8 @@ const EditProfile = ({data, onChange, navigation, route}) => {
                 onChangeText={setPreapertment}
               />
             </View>
+            
+            <Text style={{color: 'red', textAlign: 'center'}}>{error}</Text>
             <View
               style={{
                 flexDirection: 'row',

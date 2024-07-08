@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {
   Image,
+  RefreshControl,
   ScrollView,
   StyleSheet,
   Text,
@@ -31,12 +32,20 @@ const Maindashboard = props => {
   const [totalMalePatients, setTotalMalePatients] = React.useState('');
   const [totalFemalePatients, setTotalFemalePatients] = React.useState('');
 
+  const [refresh, setRefresh] = React.useState(false);
+
   React.useEffect(() => {
+    getData();
+  }, []);
+
+  const getData = async () => {
+    setRefresh(true);
     getDoc();
     getTotalPatient();
     getTotalMalePatient();
     getTotalFemalePatient();
-  }, []);
+    setRefresh(false);
+  }
 
   const getDoc = async () => {
     const id = await AsyncStorage.getItem(USER_ID);
@@ -110,7 +119,11 @@ const Maindashboard = props => {
 
   return (
     <>
-      <ScrollView showsVerticalScrollIndicator={false} overScrollMode="never">
+      <ScrollView showsVerticalScrollIndicator={false} overScrollMode="never" refreshControl={
+        <RefreshControl 
+        refreshing={refresh} onRefresh={getData} 
+        />
+      }>
         <View style={styles.main}>
           <View style={styles.profile}>
             <TouchableOpacity
