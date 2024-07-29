@@ -25,7 +25,7 @@ import FemaleIcon from '../assets/svg/female';
 import MoneyIcon from '../assets/svg/money';
 import CalenderIcon from '../assets/svg/calender';
 import DraftIcon from '../assets/svg/draft';
-import Carousel from './Carousel';
+import BannerCarousel from './Carousel';
 
 const Maindashboard = props => {
   const [doctorInfo, setDoctorInfo] = React.useState({});
@@ -46,7 +46,7 @@ const Maindashboard = props => {
     getTotalMalePatient();
     getTotalFemalePatient();
     setRefresh(false);
-  }
+  };
 
   const getDoc = async () => {
     const id = await AsyncStorage.getItem(USER_ID);
@@ -60,7 +60,7 @@ const Maindashboard = props => {
       .catch(err => console.log('get doctor fail:', err.response.data));
   };
 
-  console.log('doctorInfo', doctorInfo)
+  console.log('doctorInfo', doctorInfo);
 
   const getTotalPatient = async () => {
     const token = await AsyncStorage.getItem(USER_TOKEN);
@@ -120,11 +120,12 @@ const Maindashboard = props => {
 
   return (
     <>
-      <ScrollView showsVerticalScrollIndicator={false} overScrollMode="never" refreshControl={
-        <RefreshControl 
-        refreshing={refresh} onRefresh={getData} 
-        />
-      }>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        overScrollMode="never"
+        refreshControl={
+          <RefreshControl refreshing={refresh} onRefresh={getData} />
+        }>
         <View style={styles.main}>
           <View style={styles.profile}>
             <TouchableOpacity
@@ -142,44 +143,54 @@ const Maindashboard = props => {
               )}
             </TouchableOpacity>
 
-            <View style={{
-              flex: 1,
-              flexDirection: 'row',
-              justifyContent: 'space-between'
-            }}>
-            <View style={{
-              flex: 1,
-              marginLeft: 10
-            }}>
-              <Text style={styles.prtxt}> Welcome back, </Text>
-              <View style={styles.verified}>
-                <Text style={styles.dctr} numberOfLines={1}>{doctorInfo?.user?.fullName || 'Dr. Ariful Haque'}</Text>
-                <View style={{
-                  marginTop: 2
+            <View
+              style={{
+                flex: 1,
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+              }}>
+              <View
+                style={{
+                  flex: 1,
+                  marginLeft: 10,
                 }}>
-                <VerifiedIcon />
+                <Text style={styles.prtxt}> Welcome back, </Text>
+                <View style={styles.verified}>
+                  <Text style={styles.dctr} numberOfLines={1}>
+                    {doctorInfo?.user?.fullName || 'Dr. Ariful Haque'}
+                  </Text>
+                  <View
+                    style={{
+                      marginTop: 2,
+                    }}>
+                    <VerifiedIcon />
+                  </View>
                 </View>
+                <Text style={styles.titl}>
+                  {doctorInfo?.doctor?.medicalName || 'B.H.M.S, DU'}
+                </Text>
               </View>
-              <Text style={styles.titl}>{doctorInfo?.doctor?.medicalName || 'B.H.M.S, DU'}</Text>
-            </View>
-            <View style={{
-              flex: 1,
-              alignItems: 'flex-end',
-                alignItems: 'center'
-            }}>
-                
-              <SunRiseIcon />
-              <Text style={styles.gomor}> Good Morning </Text>
-            </View>
+              <View
+                style={{
+                  flex: 1,
+                  alignItems: 'flex-end',
+                  alignItems: 'center',
+                }}>
+                <SunRiseIcon />
+                <Text style={styles.gomor}> Good Morning </Text>
+              </View>
             </View>
           </View>
 
-          <View style={styles.slide}>
-            <Image
+          <View
+            style={{
+              flex: 1,
+            }}>
+            {/* <Image
               source={require('../assets/dashboard/quote.png')}
               style={styles.pic}
-            />
-            <Carousel />
+            /> */}
+            <BannerCarousel />
           </View>
 
           <View>
@@ -193,7 +204,6 @@ const Maindashboard = props => {
               <Text style={styles.txt}>Total Patient </Text>
             </View>
             <View style={styles.overview2}>
-              
               <MaleIcon />
               <Text style={styles.num}>{totalMalePatients || '00'}</Text>
               <Text style={styles.txt}> Male </Text>
@@ -211,14 +221,12 @@ const Maindashboard = props => {
 
           <View style={styles.scndoverview}>
             <View style={styles.overvieww1}>
-              
               <MoneyIcon />
               <Text style={styles.num}>0</Text>
               <Text style={styles.txt}> 7 days Earning </Text>
             </View>
 
             <View style={styles.overvieww2}>
-              
               <CalenderIcon />
               <Text style={styles.num}>0</Text>
               <Text style={styles.txt}> Due </Text>
@@ -233,19 +241,19 @@ const Maindashboard = props => {
             activeOpacity={0.5}
             style={styles.draft}
             onPress={() => props.navigation.navigate('drafts')}>
-
-              <DraftIcon />
+            <DraftIcon />
             <Text style={styles.num}>0</Text>
             <Text style={styles.txt}>Total Draft Patient </Text>
           </TouchableOpacity>
-
         </View>
-        
-        <View style={{
-            height: 50, 
+
+        <View
+          style={{
+            height: 50,
             width: 10,
-            flex: 1
-          }}/>
+            flex: 1,
+          }}
+        />
       </ScrollView>
 
       <View style={styles.btmnav}>
@@ -289,9 +297,7 @@ const Maindashboard = props => {
         <View>
           <TouchableOpacity
             style={styles.navItemContainer}
-            onPress={() =>
-              props.navigation.navigate('profile')
-            }>
+            onPress={() => props.navigation.navigate('profile')}>
             <ProfileIcon />
             <Text style={styles.navTitleInActive}>Profile</Text>
           </TouchableOpacity>
@@ -340,14 +346,14 @@ const styles = StyleSheet.create({
 
   verified: {
     flexDirection: 'row',
-    marginTop: 2
+    marginTop: 2,
   },
   prtxt: {
     fontFamily: 'Poppins Regular',
     color: '#4F4F4F',
     fontSize: 13,
     textAlign: 'left',
-    marginLeft: 2
+    marginLeft: 2,
   },
   dctr: {
     fontFamily: 'Poppins SemiBold',
@@ -355,8 +361,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     lineHeight: 21,
     color: '#192608',
-    marginHorizontal: 5
-    
+    marginHorizontal: 5,
   },
   icon: {
     width: 13.89,
@@ -368,7 +373,7 @@ const styles = StyleSheet.create({
     color: '#4F4F4F',
     fontFamily: 'Poppins Medium',
     fontSize: 12,
-    marginLeft: 8
+    marginLeft: 8,
   },
   icn: {
     width: 30,
@@ -379,7 +384,6 @@ const styles = StyleSheet.create({
     color: '#4F4F4F',
     fontFamily: 'Poppins Regular',
     fontSize: 12,
-    
   },
   sun: {
     // flexDirection: 'column',
@@ -388,7 +392,7 @@ const styles = StyleSheet.create({
     width: '95%',
     height: 195,
     marginTop: 40,
-    alignSelf: 'center'
+    alignSelf: 'center',
     // marginLeft: 10
   },
   pateint: {
@@ -396,12 +400,12 @@ const styles = StyleSheet.create({
     color: '#4F4F4F',
     fontSize: 18,
     marginTop: 30,
-    marginLeft: 20
+    marginLeft: 20,
   },
   overview: {
     flexDirection: 'row',
     marginTop: 10,
-    marginLeft: '5%'
+    marginLeft: '5%',
   },
   overview1: {
     width: 112,
@@ -415,7 +419,7 @@ const styles = StyleSheet.create({
     borderLeftWidth: 0.2,
     borderRightWidth: 0.2,
     borderColor: '#42D782',
-    borderTopColor: 'white'
+    borderTopColor: 'white',
   },
 
   overview2: {
@@ -430,7 +434,7 @@ const styles = StyleSheet.create({
     borderLeftWidth: 0.2,
     borderRightWidth: 0.2,
     borderColor: '#42D782',
-    borderTopColor: 'white'
+    borderTopColor: 'white',
   },
 
   overview3: {
@@ -442,16 +446,14 @@ const styles = StyleSheet.create({
     top: 3,
     justifyContent: 'center',
     alignItems: 'center',
-    
+
     borderBottomWidth: 0.8,
     borderLeftWidth: 0.2,
     borderRightWidth: 0.2,
     borderColor: '#42D782',
-    borderTopColor: 'white'
+    borderTopColor: 'white',
   },
 
-  
-  
   txt: {
     fontFamily: 'Poppins',
     width: 85,
@@ -463,12 +465,10 @@ const styles = StyleSheet.create({
     lineHeight: 19.5,
   },
   num: {
-    
     fontFamily: 'Poppins Medium',
     color: '#192608',
     fontSize: 18,
-    marginTop: 15
-
+    marginTop: 15,
   },
   txt: {
     fontSize: 13,
@@ -476,7 +476,7 @@ const styles = StyleSheet.create({
     lineHeight: 19.5,
     fontFamily: 'Poppins Regular',
     color: '#4F4F4F',
-    marginBottom: 10
+    marginBottom: 10,
   },
   txt1: {
     fontFamily: 'Poppins',
@@ -524,7 +524,7 @@ const styles = StyleSheet.create({
     borderLeftWidth: 0.2,
     borderRightWidth: 0.2,
     borderColor: '#42D782',
-    borderTopColor: 'white'
+    borderTopColor: 'white',
   },
   overvieww2: {
     width: 165,
@@ -538,7 +538,7 @@ const styles = StyleSheet.create({
     borderLeftWidth: 0.2,
     borderRightWidth: 0.2,
     borderColor: '#42D782',
-    borderTopColor: 'white'
+    borderTopColor: 'white',
   },
 
   bill1: {
@@ -594,8 +594,7 @@ const styles = StyleSheet.create({
     borderRightWidth: 0.2,
     borderColor: '#42D782',
     borderTopColor: 'white',
-    marginLeft: 20
-    
+    marginLeft: 20,
   },
   drimg: {
     width: 27.86,
@@ -631,7 +630,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#B0B0B040',
     justifyContent: 'space-evenly',
-    
+
     elevation: 24,
     // top: 125,
   },
