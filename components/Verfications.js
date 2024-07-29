@@ -9,16 +9,21 @@ import {
 
 import axios from 'axios';
 import {apiService} from '../src/services/api-service';
+import { useNavigation } from '@react-navigation/native';
+import Toast from 'react-native-toast-message';
 
-const Verifications = ({navigation, route, props}) => {
+const Verifications = ({navigation, route}) => {
   // const [otp, setOtp] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState('');
   const {email} = route.params;
+
+  const {navigate} = useNavigation();
 
   const handleVerifyOTP = async () => {
     try {
       await apiService.verifyOTP({email: email, otp: otp}).then(() => {
-        navigation.navigate('Signin');
+        navigate('Signin');
       });
     } catch (err) {
       setError('Invalid OTP, please try again');
@@ -58,7 +63,12 @@ const Verifications = ({navigation, route, props}) => {
     }
   };
 
+  const resetOTP = () => {
+
+  }
+
   const handleSubmit = async () => {
+    setLoading(true);
     try {
       const finalOtp = otp.join('').toString();
       console.log('Entered OTP:', finalOtp);
@@ -67,8 +77,20 @@ const Verifications = ({navigation, route, props}) => {
         .verifyOTP({email: email, otp: finalOtp})
         .then(() => {
           navigation.navigate('signin');
+          Toast.show({
+            type: 'success',
+            text1: `User created successfully, please login to continue`,
+          });
         })
-        .catch(err => console.log('otp submit immediate block :', err));
+        .catch(err => {
+          Toast.show({
+            type: 'error',
+            text1: `${err.message}`,
+          });
+          console.log('otp submit immediate block :', err)
+        }).finally(() => {
+          return setLoading(false);
+        });
     } catch (err) {
       console.log('otp submit error :', err);
       setError('Invalid OTP, please try again');
@@ -94,7 +116,7 @@ const Verifications = ({navigation, route, props}) => {
             paddingHorizontal: 20,
           }}>
           <Text style={styles.head}>
-            Please enter the 4-digit code in the email we just
+            Please enter the 6-digit code in the email we just
           </Text>
           <Text style={styles.head}>
           sent to {email}
@@ -127,7 +149,7 @@ const Verifications = ({navigation, route, props}) => {
           <View style={styles.lstext}>
             <Text style={styles.txt}>Not you? </Text>
             <TouchableOpacity
-              onPress={() => props.navigation.navigate('create')}>
+              onPress={() => navigate('create')}>
               <Text style={styles.email}>Change email/phone</Text>
             </TouchableOpacity>
           </View>
@@ -139,7 +161,7 @@ const Verifications = ({navigation, route, props}) => {
           }}>
           <View style={{flexDirection: 'row', justifyContent: 'center'}}>
             <TouchableOpacity style={styles.buton} onPress={handleSubmit}>
-              <Text style={[styles.txt, {color: '#fff'}]}>Next</Text>
+              <Text style={[styles.txt, {color: '#fff'}]}>Next{loading && '...'}</Text>
             </TouchableOpacity>
           </View>
 
@@ -149,7 +171,7 @@ const Verifications = ({navigation, route, props}) => {
               justifyContent: 'center',
               marginTop: 10,
             }}>
-            <TouchableOpacity style={styles.butonResend}>
+            <TouchableOpacity style={styles.butonResend} onPress={resetOTP}>
               <Text style={[styles.txt, {color: '#5B6550'}]}>Resend</Text>
             </TouchableOpacity>
           </View>

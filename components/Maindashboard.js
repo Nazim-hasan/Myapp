@@ -25,6 +25,7 @@ import FemaleIcon from '../assets/svg/female';
 import MoneyIcon from '../assets/svg/money';
 import CalenderIcon from '../assets/svg/calender';
 import DraftIcon from '../assets/svg/draft';
+import Carousel from './Carousel';
 
 const Maindashboard = props => {
   const [doctorInfo, setDoctorInfo] = React.useState({});
@@ -178,6 +179,7 @@ const Maindashboard = props => {
               source={require('../assets/dashboard/quote.png')}
               style={styles.pic}
             />
+            <Carousel />
           </View>
 
           <View>

@@ -17,6 +17,7 @@ import GoogleIcon from '../assets/svg/google';
 import FacebookIcon from '../assets/svg/facebook';
 import AppleIcon from '../assets/svg/apple';
 import EyeSlashIcon from '../assets/svg/eye';
+import Toast from 'react-native-toast-message';
 
 const Createacount = props => {
   const navigation = useNavigation();
@@ -29,6 +30,8 @@ const Createacount = props => {
   const [secureText, setSecureText] = useState(true);
 
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  
 
   const handleSecureText = () => {
     setSecureText(prev => !prev);
@@ -55,6 +58,7 @@ const Createacount = props => {
   // };
 
   const handleSignUp = async () => {
+    setLoading(true);
     try {
       const user = {
         fullName: name,
@@ -68,12 +72,23 @@ const Createacount = props => {
         .then(res => {
           console.log('signup success', res);
           navigation.navigate('verify', {email});
+          setLoading(false);
+          Toast.show({
+            type: 'success',
+            text1: `User created successfully, please verify your email`,
+          });
         })
         .catch(err => {
+          Toast.show({
+            type: 'error',
+            text1: `${err.message}`,
+          });
           console.log('error while signing up (after then) :', err);
+          setLoading(false);
         });
     } catch (err) {
       console.log('error while signing up :', err);
+      setLoading(false);
     }
   };
 
@@ -120,6 +135,7 @@ const Createacount = props => {
               value={phone}
               onChangeText={setPhone}
               style={styles.inputStyles}
+              keyboardType="phone-pad"
             />
           </View>
           <View style={styles.inputContainer}>
@@ -200,7 +216,7 @@ const Createacount = props => {
 
         <View style={{flexDirection: 'row', justifyContent: 'center'}}>
           <TouchableOpacity style={styles.buton} onPress={handleSignUp}>
-            <Text style={[styles.txt, {color: '#fff'}]}>Create Account</Text>
+            <Text style={[styles.txt, {color: '#fff'}]}>Create Account {loading && '...'}</Text>
           </TouchableOpacity>
         </View>
         <View

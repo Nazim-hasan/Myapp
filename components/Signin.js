@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {
   Pressable,
+  StatusBar,
   StyleSheet,
   Text,
   TextInput,
@@ -18,6 +19,7 @@ import GoogleIcon from '../assets/svg/google';
 import FacebookIcon from '../assets/svg/facebook';
 import AppleIcon from '../assets/svg/apple';
 import EyeSlashIcon from '../assets/svg/eye';
+import Toast from 'react-native-toast-message';
 
 export const USER_ID = '@user_id';
 export const USER_TOKEN = '@user_token';
@@ -61,10 +63,12 @@ const Signin = ({navigation, props}) => {
         password: password,
       };
 
+      console.log('formData', formData)
+
       await apiService
         .signin(formData)
         .then(async res => {
-          console.log('login success');
+          console.log('login success', res);
           await AsyncStorage.setItem(USER_ID, res.data.data.id);
           await AsyncStorage.setItem(USER_TOKEN, res.data.token);
           setLoading(false);
@@ -77,9 +81,17 @@ const Signin = ({navigation, props}) => {
               },
             ],
           });
+          Toast.show({
+            type: 'success',
+            text1: 'Login Successful',
+          });
         })
         .catch(err => {
           setLoading(false);
+          Toast.show({
+            type: 'error',
+            text1: `${err.message}`,
+          });
           console.log('error in login :', err);
         });
     } catch (err) {
@@ -155,7 +167,11 @@ const Signin = ({navigation, props}) => {
             <TouchableOpacity
               style={{
                 justifyContent: 'center',
-              }}>
+              }}
+              onPress={() => {
+                navigation.navigate('forgetPassword');
+              }}
+              >
               <Text
                 style={{
                   color: '#6BB64A',

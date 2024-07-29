@@ -31,6 +31,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {SheetProvider} from 'react-native-actions-sheet';
 import UpdateDueScreen from './components/UpdateDueScreen';
 import UpdateBillScreen from './components/UpdateBillScreen';
+import Toast from 'react-native-toast-message';
+import ForgetPassword from './components/ForgetPassword';
 
 const stack = createNativeStackNavigator();
 
@@ -67,6 +69,13 @@ function App() {
           <stack.Screen
             name="signin"
             component={Signin}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <stack.Screen
+            name="forgetPassword"
+            component={ForgetPassword}
             options={{
               headerShown: false,
             }}
