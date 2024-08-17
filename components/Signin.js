@@ -1,26 +1,40 @@
-import {Image} from '@rneui/base';
 import React, {useEffect, useState} from 'react';
 import {
+  Pressable,
+  StatusBar,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
   View,
-  Dimensions,
 } from 'react-native';
 import {apiService} from '../src/services/api-service';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {getData} from '../src/utils/localSgorage';
+import {EmailIcon} from '../assets/svg/email';
+import {LockIcon} from '../assets/svg/lock';
+import CheckBox from '@react-native-community/checkbox';
+import {Image} from '@rneui/base';
+import GoogleIcon from '../assets/svg/google';
+import FacebookIcon from '../assets/svg/facebook';
+import AppleIcon from '../assets/svg/apple';
+import EyeSlashIcon from '../assets/svg/eye';
+import Toast from 'react-native-toast-message';
 
 export const USER_ID = '@user_id';
 export const USER_TOKEN = '@user_token';
-const dimension = Dimensions.get('screen');
 
 const Signin = ({navigation, props}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   // const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [toggleCheckBox, setToggleCheckBox] = useState(true);
+
+  const [secureText, setSecureText] = useState(true);
+  const handleSecureText = () => {
+    setSecureText(prev => !prev);
+  };
 
   useEffect(() => {
     const getToken = async () => {
@@ -49,10 +63,12 @@ const Signin = ({navigation, props}) => {
         password: password,
       };
 
+      console.log('formData', formData)
+
       await apiService
         .signin(formData)
         .then(async res => {
-          console.log('login success');
+          console.log('login success', res);
           await AsyncStorage.setItem(USER_ID, res.data.data.id);
           await AsyncStorage.setItem(USER_TOKEN, res.data.token);
           setLoading(false);
@@ -65,9 +81,17 @@ const Signin = ({navigation, props}) => {
               },
             ],
           });
+          Toast.show({
+            type: 'success',
+            text1: 'Login Successful',
+          });
         })
         .catch(err => {
           setLoading(false);
+          Toast.show({
+            type: 'error',
+            text1: `${err.message}`,
+          });
           console.log('error in login :', err);
         });
     } catch (err) {
@@ -93,75 +117,158 @@ const Signin = ({navigation, props}) => {
             marginTop: 20,
             paddingHorizontal: 20,
           }}>
-          <TextInput
-            placeholder="Email / Phone"
-            value={email}
-            onChangeText={setEmail}
-            style={styles.input1}
-            keyboardType="email-address"
-          />
-          <TextInput
-            placeholder="Password"
-            style={styles.input1}
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry={true}
-          />
+          <View style={styles.inputContainer}>
+            <EmailIcon />
+            <TextInput
+              placeholder="Email / Phone"
+              value={email}
+              onChangeText={setEmail}
+              style={styles.inputStyles}
+              keyboardType="email-address"
+            />
+          </View>
+          <View style={styles.inputContainer}>
+            <LockIcon />
+
+            <TextInput
+              placeholder="Password"
+              style={styles.inputStyles}
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry={secureText}
+            />
+            <Pressable onPress={handleSecureText}>
+              <EyeSlashIcon />
+            </Pressable>
+          </View>
 
           <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-            <Text>Remember me</Text>
-            <TouchableOpacity>
-              <Text style={{color: '#AFD59F'}}>Forgot password?</Text>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+              }}>
+              <CheckBox
+                disabled={false}
+                value={toggleCheckBox}
+                onValueChange={newValue => setToggleCheckBox(newValue)}
+                tintColors={{true: '#6BB64A', false: '#6BB64A'}}
+              />
+
+              <Text
+                style={{
+                  fontFamily: 'Poppins Regular',
+                  color: '#4F4F4F',
+                  fontSize: 13,
+                }}>
+                Remember me
+              </Text>
+            </View>
+            <TouchableOpacity
+              style={{
+                justifyContent: 'center',
+              }}
+              onPress={() => {
+                navigation.navigate('forgetPassword');
+              }}
+              >
+              <Text
+                style={{
+                  color: '#6BB64A',
+                  fontFamily: 'Poppins Regular',
+                  fontSize: 13,
+                }}>
+                Forgot password?
+              </Text>
             </TouchableOpacity>
           </View>
-        </View>
 
-        {/*
-
-        <View style={{ width: '100%', flexDirection: 'column', justifyContent: 'center', }}>
-          
-
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-            <Text>Remember me</Text>
-            <TouchableOpacity  >
-              <Text style={{ color: '#AFD59F' }}>Forgot password?</Text>
-            </TouchableOpacity>
+          <View
+            style={{
+              // backgroundColor: 'red',
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-evenly',
+              marginTop: 70,
+            }}>
+            <View>
+              <View
+                style={{
+                  borderWidth: 0.2,
+                  borderColor: '#8DC63F',
+                  width: 80,
+                }}
+              />
+            </View>
+            <Text style={styles.cont}>Or Continue with</Text>
+            <View>
+              <View
+                style={{
+                  borderWidth: 0.2,
+                  borderColor: '#8DC63F',
+                  width: 80,
+                }}
+              />
+            </View>
           </View>
 
-          <Text style={styles.cont}>Or Continue with</Text>
-        </View>
-
-        <View style={{ paddingHorizontal: '20%', marginTop: 10 }}>
-          <View style={styles.social}>
-            <View style={styles.rect}>
-              <Image source={require('../assets/social/google.png')} style={{ height: '100%', width: '100%' }} />
-            </View>
-            <View style={styles.rect}>
-              <Image source={require('../assets/social/facebook.png')} style={{ height: '100%', width: '100%' }} />
-
-            </View>
-            <View style={styles.rect}>
-              <Image source={require('../assets/social/apple.png')} style={{ height: '100%', width: '100%' }} />
+          <View style={{paddingHorizontal: '20%', marginTop: 10}}>
+            <View style={styles.social}>
+              <View style={styles.rect}>
+                <View
+                  style={{
+                    alignSelf: 'center',
+                    marginTop: 12,
+                  }}>
+                  <GoogleIcon />
+                </View>
+              </View>
+              <View style={styles.rect}>
+                <View
+                  style={{
+                    alignSelf: 'center',
+                    marginTop: 12,
+                  }}>
+                  <FacebookIcon />
+                </View>
+              </View>
+              <View style={styles.rect}>
+                <View
+                  style={{
+                    alignSelf: 'center',
+                    marginTop: 12,
+                  }}>
+                  <AppleIcon />
+                </View>
+              </View>
             </View>
           </View>
         </View>
-        {error ? <Text>{error}</Text> : null}
-
-        <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
-          <TouchableOpacity style={styles.buton} onPress={handleSignIn} >
-            {loading?(<Text style={[styles.txt, { color: '#fff' }]}>Signing in...</Text>):
-            (<Text style={[styles.txt, { color: '#fff' }]}>Sign In</Text>)}
+        <View style={{flexDirection: 'row', justifyContent: 'center'}}>
+          <TouchableOpacity style={styles.buton} onPress={handleSignIn}>
+            {loading ? (
+              <Text style={[styles.txt, {color: '#fff'}]}>Signing in...</Text>
+            ) : (
+              <Text style={[styles.txt, {color: '#fff'}]}>Sign In</Text>
+            )}
           </TouchableOpacity>
         </View>
 
-        <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
-          <Text style={styles.txt}>Do you have an account ?</Text>
-          <TouchableOpacity
-            onPress={() => navigation.navigate("create")}
-          >
-            <Text style={styles.sign}>Create account </Text>
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'center',
+            marginVertical: 20,
+          }}>
+          <Text style={[styles.txt, {color: '#212121'}]}>
+            Do you have an account?{' '}
+          </Text>
+          <TouchableOpacity onPress={() => navigation.navigate('create')}>
+            <Text style={[styles.txt, {color: '#6BB64A'}]}>
+              Create account{' '}
+            </Text>
           </TouchableOpacity>
-        </View> */}
+        </View>
       </View>
     </>
   );
@@ -179,6 +286,27 @@ const styles = StyleSheet.create({
     letterSpacing: 0.05,
   },
 
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#AFD59F',
+    borderRadius: 6,
+    marginTop: 7,
+    paddingHorizontal: 10,
+    marginVertical: 10,
+  },
+
+  inputStyles: {
+    fontFamily: 'Poppins Regular',
+    fontSize: 13,
+    fontWeight: '400',
+    lineHeight: 26,
+    letterSpacing: 0,
+    width: '87%',
+    marginLeft: 5,
+  },
+
   input1: {
     height: 52,
     marginTop: 7,
@@ -193,10 +321,9 @@ const styles = StyleSheet.create({
     borderRadius: 6,
   },
   cont: {
-    marginTop: 50,
-    fontFamily: 'Poppins',
-    fontSize: 14,
-    fontWeight: '400',
+    fontFamily: 'Poppins Regular',
+    color: '#6A6A6A',
+    fontSize: 13,
     lineHeight: 21,
     letterSpacing: 0.05,
     textAlign: 'center',
@@ -217,23 +344,16 @@ const styles = StyleSheet.create({
   },
 
   buton: {
-    height: 52,
-    width: 332,
+    height: 50,
+    width: '90%',
     backgroundColor: '#4CAF50',
     borderRadius: 14,
-    textAlign: 'center',
-    fontSize: 18,
-    color: '#fff',
-    fontFamily: 'Poppins',
-    lineHeight: 20.8,
     padding: 12,
-    marginTop: 20,
   },
 
   txt: {
-    fontFamily: 'Poppins',
+    fontFamily: 'Poppins Regular',
     fontSize: 14,
-    fontWeight: '400',
     lineHeight: 21,
     letterSpacing: 0.05,
     textAlign: 'center',

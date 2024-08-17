@@ -4,7 +4,7 @@
  *
  * @format
  */
-import {StatusBar} from 'react-native';
+import {StatusBar, Text} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {DefaultTheme, NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
@@ -29,6 +29,12 @@ import Patient from './components/Patient';
 import AddFinence from './components/AddFinence';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {SheetProvider} from 'react-native-actions-sheet';
+import UpdateDueScreen from './components/UpdateDueScreen';
+import UpdateBillScreen from './components/UpdateBillScreen';
+import Toast from 'react-native-toast-message';
+import ForgetPassword from './components/ForgetPassword';
+import AccountPolicy from './components/AccountPolicy';
+import ChangePassword from './components/ChangePassword';
 
 const stack = createNativeStackNavigator();
 
@@ -69,22 +75,370 @@ function App() {
               headerShown: false,
             }}
           />
-          <stack.Screen name="create" component={Createacount} />
-          <stack.Screen name="verify" component={Verfication} />
-          <stack.Screen name="dashboard" component={Maindashboard} />
-          <stack.Screen name="drafts" component={Drafts} />
-          <stack.Screen name="drprofile" component={Drprofile} />
-          <stack.Screen name="profile" component={Profile} />
-          <stack.Screen name="editprofile" component={Editprofile} />
-          <stack.Screen name="finance" component={Finance} />
-          <stack.Screen name="paymenthistory" component={PaymentHisotry} />
-          <stack.Screen name="patientdashboard" component={Patientdashboard} />
-          <stack.Screen name="addpatient" component={Addpatient} />
+          <stack.Screen
+            name="forgetPassword"
+            component={ForgetPassword}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <stack.Screen
+            name="changePassword"
+            component={ChangePassword}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <stack.Screen
+            name="create"
+            component={Createacount}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <stack.Screen
+            name="verify"
+            component={Verfication}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <stack.Screen
+            name="dashboard"
+            component={Maindashboard}
+            options={{
+              headerShown: false,
+              statusBarColor: '#006735',
+            }}
+          />
+
+          <stack.Screen
+            name="finance"
+            component={Finance}
+            options={{
+              headerShown: false,
+              statusBarColor: '#006735',
+            }}
+          />
+
+          <stack.Screen
+            name="patientdashboard"
+            component={Patientdashboard}
+            options={{
+              headerShown: false,
+              statusBarColor: '#006735',
+            }}
+          />
+
+          <stack.Screen
+            name="addpatient"
+            component={Addpatient}
+            options={{
+              statusBarColor: '#006735',
+              headerStyle: {
+                backgroundColor: '#00A746',
+              },
+              headerTintColor: 'white',
+              headerTitle: props => (
+                <Text
+                  style={{
+                    fontFamily: 'Poppins Regular',
+                    color: 'white',
+                    fontSize: 14,
+                    marginLeft: -25,
+                    marginTop: 3,
+                  }}>
+                  Add new patient
+                </Text>
+              ),
+            }}
+          />
+
+          <stack.Screen
+            name="editprofile"
+            component={Editprofile}
+            options={{
+              statusBarColor: '#006735',
+              headerStyle: {
+                backgroundColor: '#00A746',
+              },
+              headerTintColor: 'white',
+              headerTitle: props => (
+                <Text
+                  style={{
+                    fontFamily: 'Poppins Regular',
+                    color: 'white',
+                    fontSize: 14,
+                    marginLeft: -25,
+                    marginTop: 3,
+                  }}>
+                  Edit Profile
+                </Text>
+              ),
+            }}
+          />
+
+          <stack.Screen
+            name="profile"
+            component={Profile}
+            options={{
+              statusBarColor: '#006735',
+              headerStyle: {
+                backgroundColor: '#00A746',
+              },
+              headerTintColor: 'white',
+              headerTitle: props => (
+                <Text
+                  style={{
+                    fontFamily: 'Poppins Regular',
+                    color: 'white',
+                    fontSize: 14,
+                    marginLeft: -25,
+                    marginTop: 3,
+                  }}>
+                  Profile
+                </Text>
+              ),
+            }}
+          />
+
+          <stack.Screen
+            name="drprofile"
+            component={Drprofile}
+            options={{
+              statusBarColor: '#006735',
+              headerStyle: {
+                backgroundColor: '#00A746',
+              },
+              headerTintColor: 'white',
+              headerTitle: props => (
+                <Text
+                  style={{
+                    fontFamily: 'Poppins Regular',
+                    color: 'white',
+                    fontSize: 14,
+                    marginLeft: -25,
+                    marginTop: 3,
+                  }}>
+                  Dr Profile
+                </Text>
+              ),
+            }}
+          />
+
+          <stack.Screen
+            name="drafts"
+            component={Drafts}
+            options={{
+              statusBarColor: '#006735',
+              headerStyle: {
+                backgroundColor: '#00A746',
+              },
+              headerTintColor: 'white',
+              headerTitle: props => (
+                <Text
+                  style={{
+                    fontFamily: 'Poppins Regular',
+                    color: 'white',
+                    fontSize: 14,
+                    marginLeft: -25,
+                    marginTop: 3,
+                  }}>
+                  Drafts Data
+                </Text>
+              ),
+            }}
+          />
+
+          <stack.Screen
+            name="helpsupport"
+            component={HelpSupport}
+            options={{
+              statusBarColor: '#006735',
+              headerStyle: {
+                backgroundColor: '#00A746',
+              },
+              headerTintColor: 'white',
+              headerTitle: props => (
+                <Text
+                  style={{
+                    fontFamily: 'Poppins Regular',
+                    color: 'white',
+                    fontSize: 14,
+                    marginLeft: -25,
+                    marginTop: 3,
+                  }}>
+                  Help & Support
+                </Text>
+              ),
+            }}
+          />
+          <stack.Screen
+            name="AccountPrivacy"
+            component={AccountPolicy}
+            options={{
+              statusBarColor: '#006735',
+              headerStyle: {
+                backgroundColor: '#00A746',
+              },
+              headerTintColor: 'white',
+              headerTitle: props => (
+                <Text
+                  style={{
+                    fontFamily: 'Poppins Regular',
+                    color: 'white',
+                    fontSize: 14,
+                    marginLeft: -25,
+                    marginTop: 3,
+                  }}>
+                  Account Privacy
+                </Text>
+              ),
+            }}
+          />
+          <stack.Screen
+            name="terms"
+            component={Terms}
+            options={{
+              statusBarColor: '#006735',
+              headerStyle: {
+                backgroundColor: '#00A746',
+              },
+              headerTintColor: 'white',
+              headerTitle: props => (
+                <Text
+                  style={{
+                    fontFamily: 'Poppins Regular',
+                    color: 'white',
+                    fontSize: 14,
+                    marginLeft: -25,
+                    marginTop: 3,
+                  }}>
+                  Terms & Conditions
+                </Text>
+              ),
+            }}
+          />
+          <stack.Screen
+            name="paymenthistory"
+            component={PaymentHisotry}
+            options={{
+              statusBarColor: '#006735',
+              headerStyle: {
+                backgroundColor: '#00A746',
+              },
+              headerTintColor: 'white',
+              headerTitle: props => (
+                <Text
+                  style={{
+                    fontFamily: 'Poppins Regular',
+                    color: 'white',
+                    fontSize: 14,
+                    marginLeft: -25,
+                    marginTop: 3,
+                  }}>
+                  Payment History
+                </Text>
+              ),
+            }}
+          />
+
+          <stack.Screen
+            name="patient"
+            component={Patient}
+            options={{
+              statusBarColor: '#006735',
+              headerStyle: {
+                backgroundColor: '#00A746',
+              },
+              headerTintColor: 'white',
+              headerTitle: props => (
+                <Text
+                  style={{
+                    fontFamily: 'Poppins Regular',
+                    color: 'white',
+                    fontSize: 14,
+                    marginLeft: -25,
+                    marginTop: 3,
+                  }}>
+                  Patient Profile
+                </Text>
+              ),
+            }}
+          />
+
+          <stack.Screen
+            name="editpatient"
+            component={Editpatient}
+            options={{
+              statusBarColor: '#006735',
+              headerStyle: {
+                backgroundColor: '#00A746',
+              },
+              headerTintColor: 'white',
+              headerTitle: props => (
+                <Text
+                  style={{
+                    fontFamily: 'Poppins Regular',
+                    color: 'white',
+                    fontSize: 14,
+                    marginLeft: -25,
+                    marginTop: 3,
+                  }}>
+                  Edit Patient
+                </Text>
+              ),
+            }}
+          />
+
+          <stack.Screen
+            name="updateDue"
+            component={UpdateDueScreen}
+            options={{
+              statusBarColor: '#006735',
+              headerStyle: {
+                backgroundColor: '#00A746',
+              },
+              headerTintColor: 'white',
+              headerTitle: props => (
+                <Text
+                  style={{
+                    fontFamily: 'Poppins Regular',
+                    color: 'white',
+                    fontSize: 14,
+                    marginLeft: -25,
+                    marginTop: 3,
+                  }}>
+                  Update Due
+                </Text>
+              ),
+            }}
+          />
+          <stack.Screen
+            name="updateBill"
+            component={UpdateBillScreen}
+            options={{
+              statusBarColor: '#006735',
+              headerStyle: {
+                backgroundColor: '#00A746',
+              },
+              headerTintColor: 'white',
+              headerTitle: props => (
+                <Text
+                  style={{
+                    fontFamily: 'Poppins Regular',
+                    color: 'white',
+                    fontSize: 14,
+                    marginLeft: -25,
+                    marginTop: 3,
+                  }}>
+                  Update Bill
+                </Text>
+              ),
+            }}
+          />
           <stack.Screen name="patientprofile" component={Patientprofile} />
-          <stack.Screen name="editpatient" component={Editpatient} />
-          <stack.Screen name="helpsupport" component={HelpSupport} />
-          <stack.Screen name="terms" component={Terms} />
-          <stack.Screen name="patient" component={Patient} />
+
           <stack.Screen name="addfinance" component={AddFinence} />
         </stack.Navigator>
       </NavigationContainer>

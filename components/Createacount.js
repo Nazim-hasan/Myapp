@@ -1,11 +1,25 @@
-import { useNavigation } from '@react-navigation/native';
-import axios from 'axios';
-import React, { useState } from "react";
-import { StyleSheet, Text, TextInput, View, Image, TouchableOpacity } from 'react-native';
-import { apiService } from '../src/services/api-service';
+import {useNavigation} from '@react-navigation/native';
+import React, {useState} from 'react';
+import {
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+  TouchableOpacity,
+  Pressable,
+} from 'react-native';
+import {apiService} from '../src/services/api-service';
+import PersonIcon from '../assets/svg/person';
+import {EmailIcon} from '../assets/svg/email';
+import {LockIcon} from '../assets/svg/lock';
+import PhoneIcon from '../assets/svg/phone';
+import GoogleIcon from '../assets/svg/google';
+import FacebookIcon from '../assets/svg/facebook';
+import AppleIcon from '../assets/svg/apple';
+import EyeSlashIcon from '../assets/svg/eye';
+import Toast from 'react-native-toast-message';
 
-const Createacount = (props) => {
-
+const Createacount = props => {
   const navigation = useNavigation();
 
   const [name, setName] = useState('');
@@ -13,7 +27,15 @@ const Createacount = (props) => {
   const [phone, setPhone] = useState('');
 
   const [password, setPassword] = useState('');
+  const [secureText, setSecureText] = useState(true);
+
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  
+
+  const handleSecureText = () => {
+    setSecureText(prev => !prev);
+  };
 
   // const handleSignUp = async () => {
   //   try {
@@ -35,130 +57,221 @@ const Createacount = (props) => {
   //   }
   // };
 
-
   const handleSignUp = async () => {
+    setLoading(true);
     try {
       const user = {
         fullName: name,
         email: email,
         password: password,
-        phone: phone
-      }
-      console.log("user before create accont:",user)
-      await apiService.signup(user).then((res) => {
-        console.log("signup success",res)
-        navigation.navigate('verify', { email });
-      }).catch((err) => {
-        console.log("error while signing up (after then) :", err)
-      });
+        phone: phone,
+      };
+      console.log('user before create accont:', user);
+      await apiService
+        .signup(user)
+        .then(res => {
+          console.log('signup success', res);
+          navigation.navigate('verify', {email});
+          setLoading(false);
+          Toast.show({
+            type: 'success',
+            text1: `User created successfully, please verify your email`,
+          });
+        })
+        .catch(err => {
+          Toast.show({
+            type: 'error',
+            text1: `${err.message}`,
+          });
+          console.log('error while signing up (after then) :', err);
+          setLoading(false);
+        });
     } catch (err) {
-      console.log("error while signing up :", err);
+      console.log('error while signing up :', err);
+      setLoading(false);
     }
   };
-
 
   return (
     <>
       <View style={styles.main}>
-        <Text style={styles.create}>Create Account </Text>
+        <View
+          style={{
+            flex: 0.8,
+            alignItems: 'center',
+            justifyContent: 'flex-end',
+          }}>
+          <Text style={styles.create}>Create Account</Text>
+        </View>
 
-        <TextInput
-          placeholder="Full Name"
-          value={name}
-          onChangeText={setName}
-          style={styles.input1}
-        />
+        <View
+          style={{
+            flex: 3,
+            marginTop: 20,
+            paddingHorizontal: 20,
+          }}>
+          <View style={styles.inputContainer}>
+            <PersonIcon />
+            <TextInput
+              placeholder="Full Name"
+              value={name}
+              onChangeText={setName}
+              style={styles.inputStyles}
+            />
+          </View>
+          <View style={styles.inputContainer}>
+            <EmailIcon />
+            <TextInput
+              placeholder="Email"
+              value={email}
+              onChangeText={setEmail}
+              style={styles.inputStyles}
+            />
+          </View>
+          <View style={styles.inputContainer}>
+            <PhoneIcon />
+            <TextInput
+              placeholder="Phone"
+              value={phone}
+              onChangeText={setPhone}
+              style={styles.inputStyles}
+              keyboardType="phone-pad"
+            />
+          </View>
+          <View style={styles.inputContainer}>
+            <LockIcon />
+            <TextInput
+              placeholder="Password"
+              value={password}
+              onChangeText={setPassword}
+              style={styles.inputStyles}
+              secureTextEntry={secureText}
+            />
+            <Pressable onPress={handleSecureText}>
+              <EyeSlashIcon />
+            </Pressable>
+          </View>
 
-        <TextInput
-          placeholder="Email"
-          value={email}
-          onChangeText={setEmail}
-          style={styles.input1}
-        />
-
-        <TextInput
-          placeholder="Phone"
-          value={phone}
-          onChangeText={setPhone}
-          style={styles.input1}
-        />
-
-        <TextInput
-          placeholder="Password"
-          value={password}
-          onChangeText={setPassword}
-          style={styles.input1}
-          secureTextEntry={true}
-        />
-
-        <Text style={styles.cont}>Or Continue with</Text>
-
-        <View style={{ paddingHorizontal: '20%', marginTop: 100 }}>
-          <View style={styles.social}>
-            <View style={styles.rect}>
-              <Image source={require('../assets/social/google.png')} style={{ height: '100%', width: '100%' }} />
+          <View
+            style={{
+              // backgroundColor: 'red',
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-evenly',
+              marginTop: 70,
+            }}>
+            <View>
+              <View
+                style={{
+                  borderWidth: 0.2,
+                  borderColor: '#8DC63F',
+                  width: 80,
+                }}
+              />
             </View>
-            <View style={styles.rect}>
-              <Image source={require('../assets/social/facebook.png')} style={{ height: '100%', width: '100%' }} />
-
+            <Text style={styles.cont}>Or Continue with</Text>
+            <View>
+              <View
+                style={{
+                  borderWidth: 0.2,
+                  borderColor: '#8DC63F',
+                  width: 80,
+                }}
+              />
             </View>
-            <View style={styles.rect}>
-              <Image source={require('../assets/social/apple.png')} style={{ height: '100%', width: '100%' }} />
+          </View>
+
+          <View style={{paddingHorizontal: '20%', marginTop: 10}}>
+            <View style={styles.social}>
+              <View style={styles.rect}>
+                <View
+                  style={{
+                    alignSelf: 'center',
+                    marginTop: 12,
+                  }}>
+                  <GoogleIcon />
+                </View>
+              </View>
+              <View style={styles.rect}>
+                <View
+                  style={{
+                    alignSelf: 'center',
+                    marginTop: 12,
+                  }}>
+                  <FacebookIcon />
+                </View>
+              </View>
+              <View style={styles.rect}>
+                <View
+                  style={{
+                    alignSelf: 'center',
+                    marginTop: 12,
+                  }}>
+                  <AppleIcon />
+                </View>
+              </View>
             </View>
           </View>
         </View>
 
-        <TouchableOpacity onPress={handleSignUp} >
-          <Text style={styles.buton}>Create Account </Text>
-        </TouchableOpacity>
-
-        <View style={styles.lstext}>
-          <Text style={styles.txt}>Already have an account ?</Text>
-          <TouchableOpacity onPress={() => props.navigation.navigate('signin')}>
-            <Text style={styles.sign}>Sign In</Text>
+        <View style={{flexDirection: 'row', justifyContent: 'center'}}>
+          <TouchableOpacity style={styles.buton} onPress={handleSignUp}>
+            <Text style={[styles.txt, {color: '#fff'}]}>Create Account {loading && '...'}</Text>
           </TouchableOpacity>
         </View>
-
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'center',
+            marginVertical: 20,
+          }}>
+          <Text style={[styles.txt, {color: '#212121'}]}>
+            Already have an account ?
+          </Text>
+          <TouchableOpacity onPress={() => props.navigation.navigate('signin')}>
+            <Text style={[styles.txt, {color: '#6BB64A'}]}>Sign In</Text>
+          </TouchableOpacity>
+        </View>
       </View>
-
-
-
     </>
-
   );
-
-
 };
 
 const styles = StyleSheet.create({
-
   main: {
-    backgroundColor: 'white',
     flex: 1,
-    width: "100%",
-    height: 920,
-    overflow: "hidden",
   },
-  create: {
-    width: 208,
-    height: 31,
-    top: 44,
-    left: 82,
 
-    fontFamily: 'poppins',
+  create: {
+    fontFamily: 'Poppins Medium',
     fontSize: 24,
-    fontWeight: '600',
-    color: 'black',
+    color: '#192608',
     lineHeight: 31,
     letterSpacing: 0.05,
-    textAlign: 'center',
+  },
 
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#AFD59F',
+    borderRadius: 6,
+    marginTop: 7,
+    paddingHorizontal: 10,
+    marginVertical: 10,
+  },
 
-
+  inputStyles: {
+    fontFamily: 'Poppins Regular',
+    fontSize: 13,
+    fontWeight: '400',
+    lineHeight: 26,
+    letterSpacing: 0,
+    width: '87%',
+    marginLeft: 5,
   },
 
   input1: {
-
     width: 322,
     height: 52,
     top: '13%',
@@ -173,21 +286,14 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#AFD59F',
     borderRadius: 6,
-
   },
   cont: {
-    width: 128,
-    height: 21,
-    left: 135,
-    top: 90,
-
-    fontFamily: 'Poppins',
-    fontSize: 14,
-    fontWeight: '400',
+    fontFamily: 'Poppins Regular',
+    color: '#6A6A6A',
+    fontSize: 13,
     lineHeight: 21,
     letterSpacing: 0.05,
-    textAlign: 'left',
-
+    textAlign: 'center',
   },
 
   social: {
@@ -203,43 +309,29 @@ const styles = StyleSheet.create({
     borderColor: '#9DA296',
     margin: 13,
   },
+
   buton: {
-    height: 52,
-    width: 332,
+    height: 50,
+    width: '90%',
     backgroundColor: '#4CAF50',
     borderRadius: 14,
-    left: 12,
-    top: 110,
-    textAlign: 'center',
-    fontSize: 18,
-    color: '#fff',
-    fontFamily: 'Poppins',
-    lineHeight: 20.8,
-
     padding: 12,
-
   },
 
   lstext: {
     flexDirection: 'row',
-    top: '36%',
     left: 70,
   },
   txt: {
-
-    fontFamily: 'Poppins',
+    fontFamily: 'Poppins Regular',
     fontSize: 14,
-    fontWeight: '400',
     lineHeight: 21,
     letterSpacing: 0.05,
     textAlign: 'center',
-
   },
   sign: {
     color: '#AFD59F',
   },
-
-
 });
 
-export default Createacount; 
+export default Createacount;

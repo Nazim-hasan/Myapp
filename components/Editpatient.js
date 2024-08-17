@@ -9,29 +9,32 @@ import { USER_TOKEN } from './Signin';
 const Editpatient = ({ route, navigation }) => {
   const [profilePicture, setProfilePicture] = useState('');
   const { item } = route.params;
-  const dateOfBirthArray = item.dateOfBirth.split('-');
+  const dateOfBirthArray = item?.dateOfBirth.split('-');
+  const dayValue = dateOfBirthArray[0];
+  const monthValue = dateOfBirthArray[1];
+  const yearValue = dateOfBirthArray[2];
 
-  const [name, setName] = useState(item.fullName);
-  const [day, setDay] = useState(dateOfBirthArray[0] ?? '');
-  const [month, setMonth] = useState(dateOfBirthArray[1] ?? '');
-  const [year, setYear] = useState(dateOfBirthArray[2] ?? '');
-  const [gender, setgender] = useState(item.gender);
-  const [religion, setReligion] = useState(item.religion);
-  const [phone, setPhone] = useState(item.phone);
-  const [email, setEmail] = useState(item.email);
+  const [name, setName] = useState(item?.fullName);
+  const [day, setDay] = useState(dayValue ?? '');
+  const [month, setMonth] = useState(monthValue ?? '');
+  const [year, setYear] = useState(yearValue ?? '');
+  const [gender, setgender] = useState(item?.gender);
+  const [religion, setReligion] = useState(item?.religion);
+  const [phone, setPhone] = useState(item?.phone);
+  const [email, setEmail] = useState(item?.email);
   const [preadress, setPreadress] = useState('');
-  const [prestate, setPrestate] = useState(item.presentAddress.state);
-  const [precity, setPrecity] = useState(item.presentAddress.city);
-  const [preapertment, setPreapertment] = useState(item.presentAddress.apartment);
+  const [prestate, setPrestate] = useState(item?.presentAddress.state);
+  const [precity, setPrecity] = useState(item?.presentAddress.city);
+  const [preapertment, setPreapertment] = useState(item?.presentAddress.apartment);
   const [error, setError] = useState('');
   const [checked, setChecked] = useState(false);
 
   const [permanentAddress, setPermanentAddress] = useState('');
   const [permanentCountry, setPermanentCountry] = useState('');
   const [permanentZip, setPermanentZip] = useState('');
-  const [permanentState, setPermanentState] = useState(item.permanentAddress.state);
-  const [permanentCity, setPermanentCity] = useState(item.permanentAddress.city);
-  const [permanentApertment, setPermanentApertment] = useState(item.permanentAddress.apartment);
+  const [permanentState, setPermanentState] = useState(item?.permanentAddress.state);
+  const [permanentCity, setPermanentCity] = useState(item?.permanentAddress.city);
+  const [permanentApertment, setPermanentApertment] = useState(item?.permanentAddress.apartment);
 
 
   const handleAddpatient = async () => {
@@ -71,9 +74,9 @@ const Editpatient = ({ route, navigation }) => {
       }
     }
 
-    console.log("patient data :", data, item.id)
+    console.log("patient data :", data, item?.id)
     try {
-      await apiService.updatePatient(data, item.id, token).then((res) => {
+      await apiService.updatePatient(data, item?.id, token).then((res) => {
         console.log("update patient response ::::", res.data)
         navigation.navigate('patientdashboard');
       }).catch(err=> console.log('Catch:',err))
@@ -293,7 +296,7 @@ const styles = StyleSheet.create({
   },
   profile: {
     top: 20,
-    left: 90,
+    left: '30%',
   },
   imge: {
 
@@ -313,6 +316,7 @@ const styles = StyleSheet.create({
   },
 
   name: {
+    fontFamily: 'Poppins Regular',
     fontSize: 14,
     fontWeight: '500',
     top: 20,
@@ -321,12 +325,13 @@ const styles = StyleSheet.create({
   },
   input1: {
 
-    width: 322,
+    width: '92%',
+    paddingLeft: 10,
     height: 52,
     top: '25%',
     left: 10,
     margin: 7,
-    fontFamily: 'Poppins',
+    fontFamily: 'Poppins Regular',
     fontSize: 14,
     fontWeight: '400',
     lineHeight: 26,
@@ -345,7 +350,8 @@ const styles = StyleSheet.create({
 
   birth: {
 
-    width: 100,
+    width: '28%',
+    paddingLeft: 10,
     height: 52,
     top: '6%',
     left: 9,
@@ -385,18 +391,19 @@ const styles = StyleSheet.create({
 
   buton: {
     height: 52,
-    width: 332,
+    width: '95%',
     backgroundColor: '#4CAF50',
     borderRadius: 14,
     left: 12,
-    top: 50,
+    top: 52,
     textAlign: 'center',
     fontSize: 18,
     color: '#fff',
-    fontFamily: 'Poppins',
+    fontFamily: 'Poppins Regular',
     lineHeight: 20.8,
 
     padding: 12,
+    paddingTop: 15,
 
   },
 

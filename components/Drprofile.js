@@ -1,261 +1,356 @@
-import React, { useEffect, useState } from "react";
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-const Drprofile = (props) => {
- 
-     const[dctrname, setDctrname]=useState();
+import React, {useEffect, useState} from 'react';
+import {
+  Image,
+  Linking,
+  Pressable,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import VerifiedIcon from '../assets/svg/verified';
+import ExitIcon from '../assets/svg/exit';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import SocialIcons from '../assets/svg/social';
+import {apiService} from '../src/services/api-service';
+import {USER_ID, USER_TOKEN} from './Signin';
+import Toast from 'react-native-toast-message';
+const Drprofile = props => {
+  const [dctrname, setDctrname] = useState();
 
-     useEffect(() => {
-      const fetchDoctors = async () => {
-        try {
-          const response = await axios.get('http://localhost:5000/api/users/signup');
-          setDctrname(response.data);
-        } catch (error) {
-          console.error('Error fetching doctors', error);
-        }
-      };
-      fetchDoctors();
-    }, []);
-  
+  const getDoc = async () => {
+    const id = await AsyncStorage.getItem(USER_ID);
+    const token = await AsyncStorage.getItem(USER_TOKEN);
+    await apiService
+      .getDoctor(token)
+      .then(res => {
+        setDctrname(res.data.user);
+      })
+      .catch(err => console.log('get doctor fail:', err.response.data));
+  };
 
-     return (
-      <>
+  useEffect(() => {
+    getDoc();
+  }, []);
+
+  console.log('dctrname', dctrname);
+
+  const handleLogout = async () => {
+    await AsyncStorage.removeItem(USER_ID);
+    await AsyncStorage.removeItem(USER_TOKEN);
+    props.navigation.navigate('signin');
+  };
+
+  return (
+    <>
       <View style={styles.main}>
+        <View style={styles.profile}>
+          <TouchableOpacity
+            onPress={() => props.navigation.navigate('drprofile')}>
+            <Image style={styles.imge} />
+          </TouchableOpacity>
 
-      <View style={styles.profile}> 
-      
-      <TouchableOpacity onPress={()=> props.navigation.navigate("drprofile")}>
-      <Image style={styles.imge}/>
-    </TouchableOpacity>
-      
-    <View style={styles.drinfo}>
-    
-    <View style={styles.verified}> 
-       <Text style={styles.dctr}>{dctrname.name}</Text>
-       <Image   source={require('../assets/dashboard/check.png')} style={styles.icon}/>
-       </View>
+          <View style={styles.drinfo}>
+            <View style={styles.verified}>
+              <Text style={styles.dctr}>
+                {dctrname?.fullName || 'Update your name'}
+              </Text>
+              <View
+                style={{
+                  marginTop: 3,
+                  marginLeft: 5,
+                }}>
+                <VerifiedIcon />
+              </View>
+            </View>
 
-       <Text style={styles.titl}> {dctrname.email}</Text>
-     <View style={styles.eyes}>
-       <TouchableOpacity onPress={()=> props.navigation.navigate("profile")} style={styles.viewprof} >
-           
-         <Text style={styles.btnn}>View Profile </Text>
-         
-    </TouchableOpacity>
+            <Text style={styles.titl}>
+              {' '}
+              {dctrname?.email || 'Update your email'}
+            </Text>
+            <View style={styles.eyes}>
+              <TouchableOpacity
+                onPress={() => props.navigation.navigate('profile')}
+                style={styles.viewprof}>
+                <Text style={styles.btnn}>View Profile </Text>
+                <Image
+                  source={require('../assets/drprofile/eyes.png')}
+                  style={styles.eye}
+                />
+              </TouchableOpacity>
 
-    <TouchableOpacity onPress={()=> props.navigation.navigate("profile")}>
-          <Image source={require('../assets/drprofile/eyes.png')} style={styles.eye}/>  
-    </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() =>
+                  props.navigation.navigate('profile')
+                }></TouchableOpacity>
+            </View>
+          </View>
+        </View>
 
-    </View>
-      
-    </View>
-      
+        <View style={styles.setting}>
+          <View style={styles.acc}>
+            <TouchableOpacity>
+              <Image source={require('../assets/drprofile/user.png')} />
+            </TouchableOpacity>
+            <TouchableOpacity>
+              <Text style={styles.tit}>Account Settings</Text>
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.acc}>
+            <TouchableOpacity>
+              <Image source={require('../assets/drprofile/privacy.png')} />
+            </TouchableOpacity>
+            <TouchableOpacity
+            onPress={() => props.navigation.navigate('AccountPrivacy')}
+            >
+              <Text style={styles.tit}>Account Privacy</Text>
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.acc}>
+            <TouchableOpacity>
+              <Image source={require('../assets/drprofile/policy.png')} />
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => props.navigation.navigate('terms')}>
+              <Text style={styles.tit}>Privacy & Policy </Text>
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.acc}>
+            <TouchableOpacity>
+              <Image source={require('../assets/drprofile/help.png')} />
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => props.navigation.navigate('helpsupport')}>
+              <Text style={styles.tit}>Help & Support </Text>
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.acc}>
+            <TouchableOpacity>
+              <Image source={require('../assets/drprofile/share.png')} />
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                Toast.show({
+                  text1: 'Will available after publish on play store',
+                });
+              }}>
+              <Text style={styles.tit}> Share App </Text>
+            </TouchableOpacity>
+          </View>
+
+          <Pressable
+            onPress={() => {
+              Toast.show({
+                text1: 'Will available after publish on play store',
+              });
+            }}
+            style={styles.acc}>
+            <View>
+              <Image source={require('../assets/drprofile/rating.png')} />
+            </View>
+            <View>
+              <Text style={styles.tit}> Rating Us </Text>
+            </View>
+          </Pressable>
+          <View style={styles.acc}>
+            <ExitIcon />
+            <TouchableOpacity onPress={handleLogout}>
+              <Text style={styles.logclr}>Log out </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        <View
+          style={{
+            flex: 1,
+            justifyContent: 'flex-end',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}>
+          <View
+            style={{
+              width: '100%',
+              borderWidth: 0.2,
+              borderColor: '#717967',
+              marginBottom: 20,
+            }}
+          />
+          <View
+            style={{
+              flexDirection: 'row',
+            }}>
+            <Pressable
+              onPress={() => {
+                Linking.openURL('https://www.facebook.com/HomeolyClassic/');
+              }}>
+              <Image
+                source={require('../assets/fb.png')}
+                style={{
+                  height: 30,
+                  width: 30,
+                  marginRight: 5,
+                }}
+              />
+            </Pressable>
+            <Pressable
+              onPress={() => {
+                Toast.show({
+                  text1: 'Coming soon',
+                });
+              }}>
+              <Image
+                source={require('../assets/ig.png')}
+                style={{
+                  height: 30,
+                  width: 30,
+                  marginRight: 5,
+                }}
+              />
+            </Pressable>
+            <Pressable
+              onPress={() => {
+                Toast.show({
+                  text1: 'Coming soon',
+                });
+              }}>
+              <Image
+                source={require('../assets/x.png')}
+                style={{
+                  height: 30,
+                  width: 30,
+                }}
+              />
+            </Pressable>
+          </View>
+          <Text
+            style={{
+              fontFamily: 'Poppins Regular',
+              textAlign: 'center',
+              marginTop: 10,
+            }}
+            onPress={() => {
+              Linking.openURL('https://homeoly.com/');
+            }}>
+            www.homeoly.com
+          </Text>
+        </View>
       </View>
-
-     <View style={styles.setting}>
-        <View style={styles.acc}>
-            <TouchableOpacity> 
-            <Image source={require('../assets/drprofile/user.png')}/>
-            </TouchableOpacity>
-            <TouchableOpacity>
-            <Text style={styles.tit}>Account Settings</Text>
-            </TouchableOpacity>
-        </View>
-
-        <View style={styles.acc}>
-            <TouchableOpacity> 
-            <Image source={require('../assets/drprofile/privacy.png')}/>
-            </TouchableOpacity>
-            <TouchableOpacity>
-            <Text style={styles.tit}>Account Privacy</Text>
-            </TouchableOpacity>
-        </View>
-
-
-        <View style={styles.acc}>
-            <TouchableOpacity> 
-            <Image source={require('../assets/drprofile/policy.png')}/>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={()=> props.navigation.navigate("terms")}>
-            <Text style={styles.tit}>Privacy & Policy </Text>
-            </TouchableOpacity>
-        </View>
-
-
-        <View style={styles.acc}>
-            <TouchableOpacity> 
-            <Image source={require('../assets/drprofile/help.png')}/>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={()=> props.navigation.navigate("helpsupport")}>
-            <Text style={styles.tit}>Help & Support </Text>
-            </TouchableOpacity>
-        </View>
-
-        
-        <View style={styles.acc}>
-            <TouchableOpacity> 
-            <Image source={require('../assets/drprofile/share.png')}/>
-            </TouchableOpacity>
-            <TouchableOpacity>
-            <Text style={styles.tit}> Share App </Text>
-            </TouchableOpacity>
-        </View>
-
-        
-        <View style={styles.acc}>
-            <TouchableOpacity> 
-            <Image source={require('../assets/drprofile/rating.png')}/>
-            </TouchableOpacity>
-            <TouchableOpacity>
-            <Text style={styles.tit}> Rating Us </Text>
-            </TouchableOpacity>
-        </View>
-
-
-        
-        <View style={styles.logout}>
-            <TouchableOpacity> 
-            <Image source={require('../assets/drprofile/logout.png')}/>
-            </TouchableOpacity>
-            <TouchableOpacity>
-            <Text style={styles.logclr}>Log out  </Text>
-            </TouchableOpacity>
-        </View>
-     </View>
-
-
-      </View>
-      </>
-
-     );
-
-
-
-
+    </>
+  );
 };
 
 const styles = StyleSheet.create({
-    main:{
-        backgroundColor: 'white',
-        flex: 1,
-        width: "100%",
-        height: 920,
-        overflow: "hidden",
-    },
-    profile:{
-        flexDirection: 'row',
-        top: 20,
-        left: 10,
-     },
-
-     imge:{
-
-        width: 100,
-        height: 100, 
-        
-        backgroundColor: 'lightgray',
-        borderRadius: 50,
-       padding: 10, 
-   
-   
-   
-   },
-   drinfo:{
-     flexDirection: 'column', 
-     left: 8,
-   },
-   
-   verified:{
-     flexDirection: 'row',
-   },
-
-   dctr:{
-    fontFamily: 'Poppins',
-  fontSize: 18,
-  fontWeight: '600',
-  lineHeight: 21,
-  textAlign: 'left',
-  color: '#192608',
-  width: 139,
-  height: 23,
-  top: 10,
-   },
-
-  icon:{
-    width: 13.89,
-  height: 14,
-  right: 8,
-  top: 14,
+  btnn: {
+    fontFamily: 'Poppins Regular',
+    color: '#00A746',
+    fontSize: 14,
   },
-  titl:{
-    FontSize: 12,
-    fontWeight: '400',
-    top: 15,
+  main: {
+    flex: 1,
   },
-
-  eyes:{
-      flexDirection: 'row', 
-  }, 
-
-  eye:{
-      top: 32,
-      right: 37,
-  },
-
-  viewprof:{
+  profile: {
+    flexDirection: 'row',
     top: 20,
-    width: 130, 
-    height: 38, 
-    borderRadius: 6, 
-    borderWidth: 1, 
-    borderColor:  '#00A746',
-    padding: 8,
-   
-     
-  } ,
+    left: 10,
+  },
 
-  setting:{
-    flexDirection: 'column', 
+  imge: {
+    width: 100,
+    height: 100,
+
+    backgroundColor: 'lightgray',
+    borderRadius: 50,
+    padding: 10,
+  },
+  drinfo: {
+    flexDirection: 'column',
+    left: 8,
+  },
+
+  verified: {
+    flexDirection: 'row',
+  },
+
+  dctr: {
+    fontFamily: 'Poppins Medium',
+    fontSize: 16,
+    lineHeight: 21,
+    textAlign: 'left',
+    color: '#192608',
+  },
+
+  icon: {
+    width: 13.89,
+    height: 14,
+    right: 8,
+    top: 14,
+  },
+  titl: {
+    fontFamily: 'Poppins Regular',
+    color: '#4F4F4F',
+    FontSize: 14,
+    marginTop: 5,
+  },
+
+  eyes: {
+    flexDirection: 'row',
+  },
+
+  eye: {},
+
+  viewprof: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: '#00A746',
+    padding: 5,
+    marginTop: 10,
+  },
+
+  setting: {
+    flexDirection: 'column',
     margin: 10,
-    
-  }, 
-
-  acc:{
-    flexDirection: 'row', 
-    top:55,
-    left: 15,
+    marginTop: 30,
   },
 
-  tit:{
-
-fontFamily: 'Poppins',
-fontSize: 16,
-fontWeight: '400',
-lineHeight: 26,
-letterSpacing: 0.05,
-textAlign: 'left',
-left: 10, 
-margin: 10,
-color: '#192608',
-
+  acc: {
+    flexDirection: 'row',
+    marginTop: 10,
+    alignItems: 'center',
   },
-  logout:{
-    flexDirection: 'row', 
-    top:75,
-    left: 15,
-  },
-  logclr:{
 
-    fontFamily: 'Poppins',
+  tit: {
+    fontFamily: 'Poppins Regular',
     fontSize: 16,
     fontWeight: '400',
     lineHeight: 26,
     letterSpacing: 0.05,
     textAlign: 'left',
-    left: 18, 
+    left: 10,
+    margin: 10,
+    color: '#192608',
+  },
+  logout: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 80,
+  },
+  logclr: {
+    fontFamily: 'Poppins Regular',
+    fontSize: 16,
+    fontWeight: '400',
+    lineHeight: 26,
+    letterSpacing: 0.05,
+    textAlign: 'left',
+    left: 10,
+    margin: 10,
     color: 'red',
-      },
-  
-
+  },
 });
-export default Drprofile; 
+export default Drprofile;
