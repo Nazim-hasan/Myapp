@@ -34,6 +34,7 @@ import UpdateBillScreen from './components/UpdateBillScreen';
 import Toast from 'react-native-toast-message';
 import ForgetPassword from './components/ForgetPassword';
 import AccountPolicy from './components/AccountPolicy';
+import ChangePassword from './components/ChangePassword';
 
 const stack = createNativeStackNavigator();
 
@@ -77,6 +78,13 @@ function App() {
           <stack.Screen
             name="forgetPassword"
             component={ForgetPassword}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <stack.Screen
+            name="changePassword"
+            component={ChangePassword}
             options={{
               headerShown: false,
             }}

@@ -1,11 +1,14 @@
 import axios from 'axios';
 
 // const baseUrl = 'http://192.168.0.214:5000/';
-const baseUrl = 'https://homeoly-server-main.onrender.com/';
+const baseUrl = 'https://app.homeoly.com/';
 // const baseUrl = 'https://app.homeoly.com/';
 
 const endpoints = {
   SIGNUP: 'auth/api/user/signup',
+  FORGOT_PASSWORD: 'auth/api/forgot-password',
+  FORGOT_PASSWORD_VERIFY_OTP: 'auth/api/forgot-password/verify-otp',
+  RESET_PASSWORD: 'auth/api/reset-password',
   VERIFY: 'auth/api/user/verify-otp',
   SIGNIN: 'auth/api/user/signin',
   GET_DOCTOR: 'api/users/doctor',
@@ -27,6 +30,12 @@ const endpoints = {
 
 export const apiService = {
   signup: async user => await axios.post(baseUrl + endpoints.SIGNUP, user),
+  forgotPassword: async formData =>
+    await axios.post(baseUrl + endpoints.FORGOT_PASSWORD, formData),
+  forgotPasswordVerifyOTP: async formData =>
+    await axios.post(baseUrl + endpoints.FORGOT_PASSWORD_VERIFY_OTP, formData),
+  resetPassword: async formData =>
+    await axios.post(baseUrl + endpoints.RESET_PASSWORD, formData),
   verifyOTP: async formData =>
     await axios.post(baseUrl + endpoints.VERIFY, formData),
   signin: async formData =>

@@ -9,6 +9,7 @@ import React, {useRef, useState} from 'react';
 import {EmailIcon} from '../assets/svg/email';
 import {useNavigation} from '@react-navigation/native';
 import Toast from 'react-native-toast-message';
+import { apiService } from '../src/services/api-service';
 
 const ForgetPassword = () => {
   const [email, setEmail] = useState('');
@@ -20,21 +21,56 @@ const ForgetPassword = () => {
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const inputs = useRef([]);
 
-  const handleSendOTPEmail = () => {
-    if (!isOTPSend) {
-      if (email.length > 5) {
-        Toast.show({
-          type: 'success',
-          text1: 'OTP Send Successfully, Please Check Your Email',
-        });
-        setIsOTPSend(true);
-      }
-    } else {
+  const sendOTP = async () => {
+    await apiService.forgotPassword({
+      email
+    }).then((res) => {
+      console.log('res', res)
+      Toast.show({
+        type: 'success',
+        text1: 'OTP Send Successfully, Please Check Your Email',
+      });
+      setIsOTPSend(true);
+    }).catch((err) => {
+      console.log(err);
+      Toast.show({
+        type: 'error',
+        text1: 'This Email is not registered',
+      });
+    }
+    );
+  };
+
+  const verifyOTP = async () => {
+    await apiService.forgotPasswordVerifyOTP ({
+      email,
+      otp: otp.join('')
+    }).then((res) => {
+      console.log('res', res)
       Toast.show({
         type: 'success',
         text1: 'Password Reset Successfully, Please Login',
       });
-      navigate('signin');
+      setIsOTPSend(true);
+      navigate('changePassword', {
+        token: res.data.token,
+      });
+    }).catch((err) => {
+      console.log(err);
+      Toast.show({
+        type: 'error',
+        text1: 'OTP is not correct',
+      });
+    });
+  }
+
+  const handleSendOTPEmail = () => {
+    if (!isOTPSend) {
+      if (email.length > 5) {
+        sendOTP();
+      }
+    } else {
+      verifyOTP();
     }
   };
 
