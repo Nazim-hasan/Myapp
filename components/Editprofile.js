@@ -1,5 +1,4 @@
-// import * as ImagePicker from 'expo-image-picker';
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   Image,
   ScrollView,
@@ -8,57 +7,59 @@ import {
   TextInput,
   View,
   TouchableOpacity,
+  Alert,
 } from 'react-native';
-import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
-import {USER_ID, USER_TOKEN} from './Signin';
+import {launchImageLibrary} from 'react-native-image-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {SelectList} from 'react-native-dropdown-select-list';
+import {USER_TOKEN} from './Signin';
 import {apiService} from '../src/services/api-service';
-import ActionSheet from 'react-native-actions-sheet';
 import CameraIcon from '../assets/svg/camera';
-import { set } from 'date-fns';
+import PhoneInput from 'react-native-phone-number-input';
 
-const EditProfile = ({data, onChange, navigation, route}) => {
+const EditProfile = ({navigation, route}) => {
   const {doctorInfo = {}} = route.params;
-  const [name, setName] = useState(doctorInfo?.user?.fullName || '');
-  const [medical, setMedical] = useState(doctorInfo?.doctor?.medicalName || '');
-  const [degree, setDegree] = useState('');
-  const [registration, setRegistration] = useState(
-    doctorInfo?.doctor?.registrationNo || '',
-  );
-  const [day, setDay] = useState('');
-  const [month, setMonth] = useState('');
-  const [year, setYear] = useState('');
-  const [gender, setgender] = useState(doctorInfo?.doctor?.gender || '');
-  const [religion, setReligion] = useState(doctorInfo?.doctor?.religion || '');
-  const [phone, setPhone] = useState(doctorInfo?.user?.phone || '');
-  const [email, setEmail] = useState(doctorInfo?.user?.email || '');
-  const [preadress, setPreadress] = useState('');
-  const [prestate, setPrestate] = useState('');
-  const [precity, setPrecity] = useState('');
-  const [preapertment, setPreapertment] = useState('');
-  const [profilePicture, setProfilePicture] = useState(
-    doctorInfo?.doctor?.image || null,
-  );
-  const [doctors, setDoctors] = useState({});
+  const [formData, setFormData] = useState({
+    name: doctorInfo?.user?.fullName || '',
+    medical: doctorInfo?.doctor?.medicalName || '',
+    degree: '',
+    registration: doctorInfo?.doctor?.registrationNo || '',
+    day: '',
+    month: '',
+    year: '',
+    gender: doctorInfo?.doctor?.gender || '',
+    religion: doctorInfo?.doctor?.religion || '',
+    phone: doctorInfo?.user?.phone || '',
+    email: doctorInfo?.user?.email || '',
+    address: '',
+    state: '',
+    city: '',
+    apartment: '',
+    profilePicture: doctorInfo?.doctor?.image || null,
+  });
+
+  const phoneInput = useRef(null);
+  const [phone, setPhone] = useState('');
+
   const [error, setError] = useState('');
 
-  const getDoc = async () => {
-    const id = await AsyncStorage.getItem(USER_ID);
-    const token = await AsyncStorage.getItem(USER_TOKEN);
-    await apiService
-      .getDoctor(token)
-      .then(res => {
-        console.log('res.data.user', res.data)
-        setDoctors(res.data.user);
-      })
-      .catch(err => console.log('get doctor fail:', err.response.data));
+  useEffect(() => {
+    getDoctor();
+  }, []);
+
+  const getDoctor = async () => {
+    try {
+      const token = await AsyncStorage.getItem(USER_TOKEN);
+      const response = await apiService.getDoctor(token);
+      console.log('Doctor data:', response.data.user);
+    } catch (err) {
+      console.log('Failed to get doctor:', err.response?.data || err.message);
+    }
   };
 
-  useEffect(() => {
-    getDoc();
-    
-  }, [doctorInfo]);
-
+  const handleInputChange = (field, value) => {
+    setFormData(prevState => ({...prevState, [field]: value}));
+  };
 
   const pickImage = () => {
     const options = {
@@ -72,407 +73,371 @@ const EditProfile = ({data, onChange, navigation, route}) => {
       if (response.didCancel) {
         console.log('User cancelled image picker');
       } else if (response.error) {
-        console.log('ImagePicker Error: ', response.error);
-      } else if (response.customButton) {
-        console.log('User tapped custom button: ', response.customButton);
-      } else {
-        const source = {uri: response.assets[0].uri};
-        // setImageUri(source.uri);
-        setProfilePicture(source.uri);
+        console.log('ImagePicker Error:', response.error);
+      } else if (response.assets && response.assets[0]) {
+        handleInputChange('profilePicture', response.assets[0].uri);
       }
     });
   };
 
-  const parseDate = (year, month, day) => {
-    const date = new Date(year, month - 1, day);
-    const formatted = date.toISOString().split('T')[0];
 
-    return formatted;
-  };
+  function parseDate(year, month, day) {
+    console.log('year', year)
+    console.log('month', month)
+    console.log('day', day)
+    
+    // Adjust the month because JavaScript's Date object uses 0-based months
+    const adjustedMonth = month - 1;
+  
+    // Return the new Date object
+    return new Date(year, adjustedMonth, day);
+  }
 
-  const handleAddDoctor = async () => {
-    console.log('I hit')
-    if (
-      !name ||
-      !medical ||
-      !degree ||
-      !profilePicture ||
-      !registration ||
-      !day ||
-      !month ||
-      !year ||
-      !gender ||
-      !religion ||
-      !phone ||
-      !email
-    ) {
-      setError('Please fill all fields and select a profile picture');
+  const handleUpdateProfile = async () => {
+    const requiredFields = [
+      'name',
+      'medical',
+      'degree',
+      'registration',
+      'day',
+      'month',
+      'year',
+      'gender',
+      'religion',
+      'email',
+      'profilePicture',
+    ];
+    const missingFields = requiredFields.filter(field => !formData[field]);
+
+    if (missingFields.length > 0) {
+      setError(`Please fill all required fields: ${missingFields.join(', ')}`);
       return;
     }
 
+    const date = parseDate(formData.year, formData.month, formData.day);
+    console.log('date', formData.year, formData.month, formData.day, date)
 
     const data = {
-      fullName: name,
+      fullName: formData.name,
       phone: phone,
-      email: email,
-      image: profilePicture,
-      dateOfBirth: parseDate(year, month, day),
-      gender: gender,
-      religion: religion,
-      medicalName: medical,
-      degrees: [
-        degree
-      ],
-      registrationNo: registration,
+      email: formData.email,
+      image: formData.profilePicture,
+      dateOfBirth: date,
+      gender: formData.gender,
+      religion: formData.religion,
+      medicalName: formData.medical,
+      degrees: [formData.degree],
+      registrationNo: formData.registration,
       presentAddress: {
-        address: preadress,
+        address: formData.address,
         country: 'BD',
-        state: prestate,
-        city: precity,
+        state: formData.state,
+        city: formData.city,
         zip: '',
-        apartment: preapertment,
+        apartment: formData.apartment,
       },
       permanentAddress: {
-        address: preadress,
+        address: formData.address,
         country: 'BD',
-        state: prestate,
-        city: precity,
+        state: formData.state,
+        city: formData.city,
         zip: '',
-        apartment: preapertment,
+        apartment: formData.apartment,
       },
     };
 
-    console.log('data', data)
-
-    const token = await AsyncStorage.getItem(USER_TOKEN);
     try {
-      await apiService
-        .updateDoctor(data, token)
-        .then(res => {
-          console.log('update doctor response ::::', res.data);
-          navigation.navigate('dashboard');
-        })
+      const token = await AsyncStorage.getItem(USER_TOKEN);
+      const response = await apiService.updateDoctor(data, token);
+      console.log('Update doctor response:', response.data);
+      Alert.alert('Success', 'Profile updated successfully');
+      navigation.navigate('dashboard');
     } catch (err) {
-      console.log('Try:', err);
-      setError('Error adding doctor, please try again');
+      console.log('Update doctor error:', err);
+      setError('Error updating profile. Please try again.');
     }
   };
 
+  const renderInputField = (label, field) => (
+    <View>
+      <TextInput
+        style={styles.input}
+        value={formData[field]}
+        onChangeText={value => handleInputChange(field, value)}
+        placeholder={label}
+      />
+    </View>
+  );
+
+  const renderSelectList = (label, field, data) => (
+    <View>
+      <SelectList
+        setSelected={val => handleInputChange(field, val)}
+        data={data}
+        save="value"
+        search={false}
+        boxStyles={styles.selectBox}
+        inputStyles={styles.selectInput}
+        dropdownStyles={styles.selectBox}
+        dropdownTextStyles={styles.selectInput}
+        placeholder={label}
+      />
+    </View>
+  );
+
+  const divisions = [
+    {key: '1', value: 'Dhaka'},
+    {key: '2', value: 'Chittagong'},
+    {key: '3', value: 'Rajshahi'},
+    {key: '4', value: 'Khulna'},
+    {key: '5', value: 'Barisal'},
+    {key: '6', value: 'Sylhet'},
+    {key: '7', value: 'Rangpur'},
+    {key: '8', value: 'Mymensingh'},
+  ];
+
+  const cities = [
+    {key: '1', value: 'Dhaka'},
+    {key: '2', value: 'Chittagong'},
+    {key: '3', value: 'Khulna'},
+    {key: '4', value: 'Rajshahi'},
+    {key: '5', value: 'Sylhet'},
+    {key: '6', value: 'Barisal'},
+    {key: '7', value: 'Rangpur'},
+    {key: '8', value: 'Mymensingh'},
+    {key: '9', value: 'Comilla'},
+    {key: '10', value: 'Narayanganj'},
+    {key: '11', value: 'Gazipur'},
+  ];
+
+  const fullDate = [
+    {
+      key: 'day',
+      value: Array.from({length: 31}, (_, index) => ({
+        key: index + 1,
+        value: String(index + 1).padStart(2, '0'),
+      })),
+    },
+    {
+      key: 'month',
+      value: [
+        {key: 1, value: 'January'},
+        {key: 2, value: 'February'},
+        {key: 3, value: 'March'},
+        {key: 4, value: 'April'},
+        {key: 5, value: 'May'},
+        {key: 6, value: 'June'},
+        {key: 7, value: 'July'},
+        {key: 8, value: 'August'},
+        {key: 9, value: 'September'},
+        {key: 10, value: 'October'},
+        {key: 11, value: 'November'},
+        {key: 12, value: 'December'},
+      ],
+    },
+    {
+      key: 'year',
+      value: Array.from({length: 41}, (_, index) => ({
+        key: index + 1,
+        value: (1970 + index).toString(),
+      })),
+    },
+  ];
+
   return (
-    <>
-      <ScrollView showsVerticalScrollIndicator={false} overScrollMode="never">
-        <View style={styles.main}>
+    <ScrollView showsVerticalScrollIndicator={false} overScrollMode="never">
+      <View style={styles.container}>
+        <View style={styles.profileImageContainer}>
           <TouchableOpacity onPress={pickImage}>
-            <View style={styles.profile}>
-              {profilePicture ? (
-                <Image source={{uri: profilePicture}} style={styles.imge} />
-              ) : (
-                <View style={styles.imge} />
-              )}
-              <View
-                style={{
-                  position: 'absolute',
-                  bottom: 1,
-                  left: '60%',
-                }}>
-                <CameraIcon />
-              </View>
+            {formData.profilePicture ? (
+              <Image
+                source={{uri: formData.profilePicture}}
+                style={styles.profileImage}
+              />
+            ) : (
+              <View style={styles.profileImagePlaceholder} />
+            )}
+            <View style={styles.cameraIconContainer}>
+              <CameraIcon />
             </View>
           </TouchableOpacity>
-
-          <View style={styles.editable}>
-            <View>
-              <Text style={styles.name}>Full Name * </Text>
-
-              <TextInput
-                placeholder="Name"
-                style={styles.input1}
-                value={name}
-                onChangeText={setName}
-              />
-            </View>
-
-            <View>
-              <Text style={styles.name}>My Medical Name * </Text>
-
-              <TextInput
-                style={styles.input1}
-                value={medical}
-                onChangeText={setMedical}
-              />
-            </View>
-
-            <View>
-              <Text style={styles.name}>Degree * </Text>
-
-              <TextInput
-                placeholder="Degree"
-                style={styles.input1}
-                value={degree}
-                onChangeText={setDegree}
-              />
-            </View>
-
-            <View>
-              <Text style={styles.name}>Registration NO * </Text>
-
-              <TextInput
-                placeholder="Registration No"
-                style={styles.input1}
-                value={registration}
-                onChangeText={setRegistration}
-              />
-            </View>
-
-            <View>
-              <Text style={styles.name}>Date of Birth * </Text>
-
-              <View style={styles.date}>
-                <TextInput
-                  placeholder="Day"
-                  style={styles.birth}
-                  value={day}
-                  onChangeText={setDay}
-                />
-
-                <TextInput
-                  placeholder="Month"
-                  style={styles.birth}
-                  value={month}
-                  onChangeText={setMonth}
-                />
-
-                <TextInput
-                  placeholder="Year"
-                  style={styles.birth}
-                  value={year}
-                  onChangeText={setYear}
-                />
-              </View>
-            </View>
-
-            <View>
-              <Text style={styles.name}>Gender * </Text>
-
-              <TextInput
-                style={styles.input1}
-                value={gender}
-                onChangeText={setgender}
-              />
-            </View>
-
-            <View>
-              <Text style={styles.name}>Phone * </Text>
-
-              <TextInput
-                style={styles.input1}
-                value={phone}
-                onChangeText={setPhone}
-              />
-            </View>
-
-            <View>
-              <Text style={styles.name}>Email * </Text>
-
-              <TextInput
-                style={styles.input1}
-                value={email}
-                onChangeText={setEmail}
-              />
-            </View>
-
-            <View>
-              <Text style={styles.name}>Religion * </Text>
-
-              <TextInput
-                style={styles.input1}
-                value={religion}
-                onChangeText={setReligion}
-              />
-            </View>
-
-            <View>
-              <Text style={styles.name}>Present Address * </Text>
-
-              <TextInput
-                placeholder="Country"
-                style={styles.input1}
-                value={preadress}
-                onChangeText={setPreadress}
-              />
-            </View>
-
-            <View style={styles.date}>
-              <TextInput
-                placeholder="State"
-                style={styles.birth1}
-                value={prestate}
-                onChangeText={setPrestate}
-              />
-
-              <TextInput
-                placeholder="City"
-                style={styles.birth1}
-                value={precity}
-                onChangeText={setPrecity}
-              />
-            </View>
-            <View>
-              <TextInput
-                placeholder="Apertment , suite etc."
-                style={styles.input1}
-                value={preapertment}
-                onChangeText={setPreapertment}
-              />
-            </View>
-            
-            <Text style={{color: 'red', textAlign: 'center'}}>{error}</Text>
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'center',
-                marginVertical: 15,
-              }}>
-              <TouchableOpacity style={styles.buton} onPress={handleAddDoctor}>
-                <Text style={[styles.txt, {color: '#fff'}]}>
-                  Update Profile
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </View>
         </View>
-      </ScrollView>
-    </>
+
+        <View style={styles.form}>
+          {renderInputField('Full Name *', 'name')}
+          {renderInputField('Medical Name *', 'medical')}
+          {renderInputField('Degree *', 'degree')}
+          {renderInputField('Registration NO *', 'registration')}
+
+          <Text style={styles.label}>Date of Birth *</Text>
+          <View style={styles.dateContainer}>
+            {fullDate.map(item => (
+              <View
+                style={{
+                  width: '30%',
+                }}>
+                {renderSelectList(item.key, item.key, item.value)}
+              </View>
+            ))}
+          </View>
+
+          {renderSelectList('Gender *', 'gender', [
+            {key: '1', value: 'Male'},
+            {key: '2', value: 'Female'},
+          ])}
+          <PhoneInput
+            ref={phoneInput}
+            defaultValue={phone}
+            defaultCode="BD"
+            layout="first"
+            onChangeText={text => {
+              setPhone(text);
+            }}
+            containerStyle={{
+              width: '100%',
+              borderWidth: 1,
+              borderColor: '#AFD59F',
+              borderRadius: 6,
+              height: 52,
+            }}
+            textInputStyle={{
+              height: 52,
+              fontFamily: 'Poppins Regular',
+              fontSize: 14,
+              color: '#454F37',
+            }}
+            codeTextStyle={{
+              fontFamily: 'Poppins Regular',
+              fontSize: 15,
+              color: '#454F37',
+              marginTop: -6
+            }}
+            textContainerStyle={{
+              height: 48,
+              backgroundColor: '#fff',
+            }}
+          />
+          {renderInputField('Email *', 'email')}
+
+          {renderSelectList('Religion *', 'religion', [
+            {key: '1', value: 'Islam'},
+            {key: '2', value: 'Hindu'},
+            {key: '3', value: 'Buddhist'},
+            {key: '4', value: 'Christian'},
+            {key: '5', value: 'Others'},
+          ])}
+
+          {renderSelectList('Present Address *', 'address', [
+            {key: '1', value: 'Bangladesh'},
+          ])}
+
+          <View style={styles.rowContainer}>
+            {renderSelectList('State', 'state', divisions)}
+            {renderSelectList('City', 'city', cities)}
+          </View>
+
+          {renderInputField('Apartment, suite etc.', 'apartment')}
+
+          {error ? <Text style={styles.errorText}>{error}</Text> : null}
+
+          <TouchableOpacity
+            style={styles.updateButton}
+            onPress={handleUpdateProfile}>
+            <Text style={styles.updateButtonText}>Update Profile</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
-  editable: {
-    marginVertical: 20,
-  },
-  inputContainer: {
-    marginVertical: 5,
-  },
-  main: {
+  container: {
     flex: 1,
+    padding: 20,
   },
-  profile: {
+  profileImageContainer: {
     alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 20,
-    marginLeft: -40,
+    marginBottom: 20,
   },
-  imge: {
+  profileImage: {
     width: 100,
     height: 100,
-    left: 20,
-    backgroundColor: 'lightgray',
     borderRadius: 50,
-    padding: 10,
   },
-  icon: {
-    top: -35,
-    left: 95,
+  profileImagePlaceholder: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    backgroundColor: 'lightgray',
   },
-
-  name: {
-    fontFamily: 'Poppins Regular',
-    fontSize: 14,
-    marginLeft: 20,
-    color: '#868D7E',
+  cameraIconContainer: {
+    position: 'absolute',
+    bottom: -3,
+    right: 0,
+    left: 65,
   },
-  input1: {
-    width: '90%',
-    height: 52,
-    paddingLeft: 10,
-    left: 10,
-    margin: 7,
-    fontFamily: 'Poppins Regular',
-    color: '#454F37',
-    fontSize: 14,
-    fontWeight: '400',
-    lineHeight: 26,
-    letterSpacing: 0,
-    textAlign: 'left',
-    borderWidth: 1,
-    borderColor: '#AFD59F',
-    borderRadius: 6,
-  },
-
-  date: {
-    flexDirection: 'row',
-  },
-
-  birth: {
-    width: '28%',
-    height: 52,
-    left: 9,
-    margin: 7,
-    fontFamily: 'Poppins Regular',
-    paddingLeft: 10,
-    fontSize: 14,
-    fontWeight: '400',
-    lineHeight: 26,
-    letterSpacing: 0,
-    textAlign: 'left',
-    borderWidth: 1,
-    borderColor: '#AFD59F',
-    borderRadius: 6,
-  },
-  birth1: {
-    width: '43%',
-    height: 52,
-    left: 9,
-    margin: 7,
-    fontFamily: 'Poppins Regular',
-    paddingLeft: 10,
-    fontSize: 14,
-    fontWeight: '400',
-    lineHeight: 26,
-    letterSpacing: 0,
-    textAlign: 'left',
-    borderWidth: 1,
-    borderColor: '#AFD59F',
-    borderRadius: 6,
-  },
-
-  buton: {
-    height: 50,
-    width: '90%',
-    backgroundColor: '#4CAF50',
-    borderRadius: 14,
-    padding: 12,
-  },
-
-  txt: {
-    fontFamily: 'Poppins Regular',
-    fontSize: 14,
-    lineHeight: 21,
-    letterSpacing: 0.05,
-    textAlign: 'center',
-  },
-
-  ///
-
-  checkbox: {
-    width: 20,
-    height: 20,
-    borderWidth: 2,
-    borderColor: '#bbb',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  checked: {
-    backgroundColor: '#ebebeb',
-  },
-  checkmark: {
-    color: '#000',
-    fontSize: 14,
+  form: {
+    gap: 15,
   },
   label: {
-    marginLeft: 2,
+    fontFamily: 'Poppins Regular',
     fontSize: 14,
+    color: '#868D7E',
+    marginBottom: 5,
+  },
+  input: {
+    height: 52,
+    borderWidth: 1,
+    borderColor: '#AFD59F',
+    borderRadius: 6,
+    paddingHorizontal: 10,
+    fontFamily: 'Poppins Regular',
+    fontSize: 14,
+    color: '#454F37',
+  },
+  dateContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  dateInput: {
+    width: '30%',
+    height: 52,
+    borderWidth: 1,
+    borderColor: '#AFD59F',
+    borderRadius: 6,
+    paddingHorizontal: 10,
+    fontFamily: 'Poppins Regular',
+    fontSize: 14,
+    color: '#454F37',
+  },
+  selectBox: {
+    borderColor: '#AFD59F',
+    borderRadius: 6,
+  },
+  selectInput: {
     fontFamily: 'Poppins Regular',
   },
+  rowContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  errorText: {
+    color: 'red',
+    textAlign: 'center',
+    marginBottom: 10,
+  },
+  updateButton: {
+    backgroundColor: '#4CAF50',
+    borderRadius: 14,
+    padding: 15,
+    alignItems: 'center',
+  },
+  updateButtonText: {
+    fontFamily: 'Poppins Regular',
+    fontSize: 16,
+    color: '#fff',
+  },
 });
+
 export default EditProfile;

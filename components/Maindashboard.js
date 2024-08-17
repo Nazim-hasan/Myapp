@@ -157,7 +157,7 @@ const Maindashboard = props => {
                 <Text style={styles.prtxt}> Welcome back, </Text>
                 <View style={styles.verified}>
                   <Text style={styles.dctr} numberOfLines={1}>
-                    {doctorInfo?.user?.fullName || 'Dr. Ariful Haque'}
+                    {doctorInfo?.user?.fullName || 'Update your name'}
                   </Text>
                   <View
                     style={{
@@ -167,7 +167,7 @@ const Maindashboard = props => {
                   </View>
                 </View>
                 <Text style={styles.titl}>
-                  {doctorInfo?.doctor?.medicalName || 'B.H.M.S, DU'}
+                  {doctorInfo?.doctor?.medicalName || 'Update your degree'}
                 </Text>
               </View>
               <View

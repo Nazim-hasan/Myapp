@@ -33,6 +33,7 @@ import UpdateDueScreen from './components/UpdateDueScreen';
 import UpdateBillScreen from './components/UpdateBillScreen';
 import Toast from 'react-native-toast-message';
 import ForgetPassword from './components/ForgetPassword';
+import AccountPolicy from './components/AccountPolicy';
 
 const stack = createNativeStackNavigator();
 
@@ -260,6 +261,29 @@ function App() {
                     marginTop: 3,
                   }}>
                   Help & Support
+                </Text>
+              ),
+            }}
+          />
+          <stack.Screen
+            name="AccountPrivacy"
+            component={AccountPolicy}
+            options={{
+              statusBarColor: '#006735',
+              headerStyle: {
+                backgroundColor: '#00A746',
+              },
+              headerTintColor: 'white',
+              headerTitle: props => (
+                <Text
+                  style={{
+                    fontFamily: 'Poppins Regular',
+                    color: 'white',
+                    fontSize: 14,
+                    marginLeft: -25,
+                    marginTop: 3,
+                  }}>
+                  Account Privacy
                 </Text>
               ),
             }}

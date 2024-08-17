@@ -1,4 +1,3 @@
-import axios from 'axios';
 import React, {useEffect, useState} from 'react';
 import {
   Image,
@@ -19,13 +18,28 @@ const Profile = props => {
   const [doctors, setDoctors] = useState({});
   const [refresh, setRefresh] = useState(false);
 
+  // const getDoc = async () => {
+  //   const id = await AsyncStorage.getItem(USER_ID);
+  //   const token = await AsyncStorage.getItem(USER_TOKEN);
+  //   await apiService
+  //     .getDoctor(token)
+  //     .then(res => {
+  //       setDoctors(res.data.user);
+  //     })
+  //     .catch(err => console.log('get doctor fail:', err.response.data));
+  // };
+
   const getDoc = async () => {
     const id = await AsyncStorage.getItem(USER_ID);
     const token = await AsyncStorage.getItem(USER_TOKEN);
+
     await apiService
       .getDoctor(token)
       .then(res => {
-        setDoctors(res.data.user);
+        console.log('------------------');
+        console.log('res.data', res.data);
+        console.log('------------------');
+        setDoctors(res.data);
       })
       .catch(err => console.log('get doctor fail:', err.response.data));
   };
@@ -59,11 +73,15 @@ const Profile = props => {
         </TouchableOpacity>
       </View>
       <View style={styles.viewpr}>
-        <Image style={styles.imge} />
+        {doctors?.doctor?.image ? (
+          <Image source={{uri: doctors.doctor.image}} style={styles.imge} />
+        ) : (
+          <Image style={styles.imge} />
+        )}
 
         <View style={styles.verified}>
           <Text style={styles.dctr}>
-            {doctors.fullName || 'Dr. Ariful Haque'}
+            {doctors?.user?.fullName || 'Update your name'}
           </Text>
           <View
             style={{
@@ -74,10 +92,13 @@ const Profile = props => {
           </View>
         </View>
 
-        <Text style={styles.title}> {doctors.degree || 'B.H.M.S, DU'}</Text>
+        <Text style={styles.title}>
+          {' '}
+          {doctors?.degree || 'Update your degree'}
+        </Text>
         <Text style={styles.reg}>
           Registration No:
-          {doctors.registration || '254654'}
+          {doctors?.doctor?.registrationNo || '----'}
         </Text>
       </View>
 
@@ -89,21 +110,21 @@ const Profile = props => {
             color: '#4F4F4F',
           }}>
           {' '}
-          {doctors.medical || 'Shafi Homeo Care'}
+          {doctors?.medical || 'Update medical name'}
         </Text>
         <Text
           style={{
             fontFamily: 'Poppins Regular',
             color: '#5B6550',
           }}>
-          Phone: {doctors.phone || '+880 1610 123112'}{' '}
+          Phone: {doctors?.phone || 'Update medical phone'}{' '}
         </Text>
         <Text
           style={{
             fontFamily: 'Poppins Regular',
             color: '#5B6550',
           }}>
-          Email: {doctors.email || ' ariful.uxd@gmail.com'}
+          Email: {doctors?.email || 'Update medical email'}
         </Text>
         <Text
           style={{
@@ -113,8 +134,7 @@ const Profile = props => {
             marginTop: 20,
           }}>
           {' '}
-          {doctors.precity ||
-            'House: 32/1, Road: 03,Shyamoli, Dhaka-1207, Bangladesh'}{' '}
+          {doctors?.precity || 'Update medical Address'}{' '}
         </Text>
       </View>
     </ScrollView>

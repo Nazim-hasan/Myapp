@@ -1,11 +1,20 @@
 import React, {useEffect, useState} from 'react';
-import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {
+  Image,
+  Linking,
+  Pressable,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import VerifiedIcon from '../assets/svg/verified';
 import ExitIcon from '../assets/svg/exit';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import SocialIcons from '../assets/svg/social';
-import { apiService } from '../src/services/api-service';
-import { USER_ID, USER_TOKEN } from './Signin';
+import {apiService} from '../src/services/api-service';
+import {USER_ID, USER_TOKEN} from './Signin';
+import Toast from 'react-native-toast-message';
 const Drprofile = props => {
   const [dctrname, setDctrname] = useState();
 
@@ -27,11 +36,10 @@ const Drprofile = props => {
   console.log('dctrname', dctrname);
 
   const handleLogout = async () => {
-    
     await AsyncStorage.removeItem(USER_ID);
     await AsyncStorage.removeItem(USER_TOKEN);
     props.navigation.navigate('signin');
-  }
+  };
 
   return (
     <>
@@ -45,7 +53,7 @@ const Drprofile = props => {
           <View style={styles.drinfo}>
             <View style={styles.verified}>
               <Text style={styles.dctr}>
-                {dctrname?.fullName || 'Dr. Ariful Haque'}
+                {dctrname?.fullName || 'Update your name'}
               </Text>
               <View
                 style={{
@@ -58,7 +66,7 @@ const Drprofile = props => {
 
             <Text style={styles.titl}>
               {' '}
-              {dctrname?.email || 'ariful.uxd@gmail.com'}
+              {dctrname?.email || 'Update your email'}
             </Text>
             <View style={styles.eyes}>
               <TouchableOpacity
@@ -93,7 +101,9 @@ const Drprofile = props => {
             <TouchableOpacity>
               <Image source={require('../assets/drprofile/privacy.png')} />
             </TouchableOpacity>
-            <TouchableOpacity>
+            <TouchableOpacity
+            onPress={() => props.navigation.navigate('AccountPrivacy')}
+            >
               <Text style={styles.tit}>Account Privacy</Text>
             </TouchableOpacity>
           </View>
@@ -122,19 +132,30 @@ const Drprofile = props => {
             <TouchableOpacity>
               <Image source={require('../assets/drprofile/share.png')} />
             </TouchableOpacity>
-            <TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                Toast.show({
+                  text1: 'Will available after publish on play store',
+                });
+              }}>
               <Text style={styles.tit}> Share App </Text>
             </TouchableOpacity>
           </View>
 
-          <View style={styles.acc}>
-            <TouchableOpacity>
+          <Pressable
+            onPress={() => {
+              Toast.show({
+                text1: 'Will available after publish on play store',
+              });
+            }}
+            style={styles.acc}>
+            <View>
               <Image source={require('../assets/drprofile/rating.png')} />
-            </TouchableOpacity>
-            <TouchableOpacity>
+            </View>
+            <View>
               <Text style={styles.tit}> Rating Us </Text>
-            </TouchableOpacity>
-          </View>
+            </View>
+          </Pressable>
           <View style={styles.acc}>
             <ExitIcon />
             <TouchableOpacity onPress={handleLogout}>
@@ -158,12 +179,61 @@ const Drprofile = props => {
               marginBottom: 20,
             }}
           />
-          <SocialIcons />
+          <View
+            style={{
+              flexDirection: 'row',
+            }}>
+            <Pressable
+              onPress={() => {
+                Linking.openURL('https://www.facebook.com/HomeolyClassic/');
+              }}>
+              <Image
+                source={require('../assets/fb.png')}
+                style={{
+                  height: 30,
+                  width: 30,
+                  marginRight: 5,
+                }}
+              />
+            </Pressable>
+            <Pressable
+              onPress={() => {
+                Toast.show({
+                  text1: 'Coming soon',
+                });
+              }}>
+              <Image
+                source={require('../assets/ig.png')}
+                style={{
+                  height: 30,
+                  width: 30,
+                  marginRight: 5,
+                }}
+              />
+            </Pressable>
+            <Pressable
+              onPress={() => {
+                Toast.show({
+                  text1: 'Coming soon',
+                });
+              }}>
+              <Image
+                source={require('../assets/x.png')}
+                style={{
+                  height: 30,
+                  width: 30,
+                }}
+              />
+            </Pressable>
+          </View>
           <Text
             style={{
               fontFamily: 'Poppins Regular',
               textAlign: 'center',
               marginTop: 10,
+            }}
+            onPress={() => {
+              Linking.openURL('https://homeoly.com/');
             }}>
             www.homeoly.com
           </Text>
